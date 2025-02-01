@@ -15,7 +15,11 @@
     "openai": "^4.82.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "web3": "^4.16.0"
+    "web3": "^4.16.0",
+    "@rainbow-me/rainbowkit": "^2.2.3",
+    "@tanstack/react-query": "^5.66.0",
+    "viem": "^2.22.17",
+    "wagmi": "^2.14.9"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
