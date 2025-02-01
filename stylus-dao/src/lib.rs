@@ -5,13 +5,17 @@
 #![cfg_attr(not(any(test, feature = "export-abi")), no_main)]
 extern crate alloc;
 
+use core::panic;
+
 use alloc::{string::String, vec::Vec};
-use alloy_primitives::{Uint, U64};
+use alloy_primitives::{Uint, I64, U64};
 /// Import items from the SDK. The prelude contains common traits and macros.
-use stylus_sdk::{alloy_primitives::Address, msg, prelude::*, storage::{StorageAddress, StorageBool, StorageBytes, StorageMap, StorageU64, StorageU8, StorageUint, StorageVec}};
+use stylus_sdk::{alloy_primitives::Address, block, call::RawCall, msg, prelude::*, storage::{StorageAddress, StorageBool, StorageBytes, StorageI64, StorageMap, StorageU64, StorageU8}};
 // use hashbrown::HashMap as Map; // alternate map implementation than StorageMap. Prefer StorageMap for persistent storage.
 use sha3::{Digest, Keccak256};
 
+
+const MULTI_SIG_THRESHOLD: u8 = 3;
 
 #[entrypoint]
 #[storage]
@@ -20,9 +24,9 @@ pub struct DAO {
     proposal_count: StorageU64,
     governance_token: StorageAddress,
     staked_balances: StorageMap<Address, StorageU64>,
-    vote_records: StorageMap<u64, StorageMap<Address, StorageU64>>,
+    vote_records: StorageMap<u64, StorageMap<Address, StorageI64>>,
     locked_stakes: StorageMap<Address, StorageU64>,
-    signers: StorageVec<StorageAddress>,  // Multi-sig signers
+    signers: StorageMap<Address, StorageAddress>,  // Multi-sig signers
     signer_approvals: StorageMap<u64, StorageMap<Address, StorageBool>>,  // Proposal ID -> (Signer -> Approved)
 }
 
@@ -61,136 +65,135 @@ impl DAO {
         action_target: Address,
         action_payload: Vec<u8>,
     ) -> u64 {
-        let proposal_id = self.proposal_count;
+        let proposal_id = self.proposal_count.get() + Uint::from(1);
         
         // hash the description for storage
         // might add to costs to execute this but that's just a tradeoff for security
         let description_hash = generate_hash(&description);
-        
-        self.proposals.insert(
-            proposal_id,
-            Proposal {
-                proposer: msg::sender(),
-                description_hash,
-                expiry_timestamp: msg::block_timestamp() + 604800, // Example: 1 week from now
-                action_target,
-                action_payload,
-                ai_review_hash: [0; 32].into(), // update later
-                ai_risk_score: 0, // update later
-                vote_yes: 0,
-                vote_no: Uint::<64, 1>::from(0),
-                executed: StorageBool::from(false),
-                approvals: 0,
-            },
-        );
-        self.proposal_count += 1;
-        proposal_id
+        let mut proposal = self.proposals.setter(proposal_id.to());
+        proposal.proposer.set(msg::sender());
+        proposal.description_hash.set_bytes(description_hash);
+        proposal.expiry_timestamp.set(Uint::from(block::timestamp() + 604800)); // Example: 1 week from now
+        proposal.action_target.set(action_target);
+        proposal.action_payload.set_bytes(action_payload);
+        proposal.ai_review_hash.set_bytes([0; 32]); // update later
+        proposal.ai_risk_score.set(Uint::from(0)); // update later
+        proposal.vote_yes.set(Uint::from(0));
+        proposal.vote_no.set(Uint::from(0));
+        proposal.executed.set(false);
+        proposal.approvals.set(Uint::from(0));
+
+        self.proposal_count.set(self.proposal_count.get() + Uint::from(1));
+        proposal_id.to()
     }
 
     /// Quadratic Voting - Each voter can vote only once per proposal
     pub fn vote(&mut self, proposal_id: u64, approve: bool) {
         let voter = msg::sender();
-        let staked_tokens = self.staked_balances.get(voter).unwrap_or(0);
+        let staked_tokens = self.staked_balances.get(voter);
+
+        if staked_tokens == Uint::from(0) {
+            panic!("Voter has no staked tokens.");
+        }
 
         // Prevent users from voting twice on the same proposal
-        let already_voted = self.vote_records.get(proposal_id).unwrap_or_default();
-        if already_voted.contains_key(&voter) {
+        let mut already_voted = self.vote_records.setter(proposal_id);
+        if already_voted.get(voter).is_zero() {
             panic!("Voter has already voted on this proposal");
         }
 
         // Apply quadratic voting formula
-        let vote_power = sqrt(staked_tokens);
-        let mut proposal = self.proposals.get(proposal_id);
+        let vote_power = Uint::from(sqrt(staked_tokens.to()));
+        let mut proposal = self.proposals.setter(proposal_id);
+        let yes_votes = proposal.vote_yes.get();
+        let no_voites = proposal.vote_no.get();
 
         if approve {
-            proposal.vote_yes += vote_power;
+            proposal.vote_yes.set(yes_votes + vote_power);
         } else {
-            proposal.vote_no += vote_power;
+            proposal.vote_no.set(no_voites + vote_power);
         }
 
         // Record the vote
-        let mut votes = self.vote_records.get(proposal_id).unwrap_or_default();
-        votes.insert(voter, vote_power);
-        self.vote_records.insert(proposal_id, votes);
+        let vote_signed = if approve { I64::unchecked_from(vote_power.to::<i64>()) } else { I64::unchecked_from(-vote_power.to::<i64>()) };
+        already_voted.insert(voter, vote_signed);        
 
         // Lock the staked tokens for this voter until the voting period ends
+        // TODO: fix this with another function that actually transfers the funds to the contract's wallet
         self.locked_stakes.insert(voter, staked_tokens);
-        self.proposals.insert(proposal_id, proposal);
     }
     
     
     /// Designate trusted signers for multi-sig execution
     pub fn add_signer(&mut self, signer: Address) {
-        if !self.signers.contains(&signer) {
-            self.signers.push(signer);
+        if self.signers.get(signer).is_empty() {
+            self.signers.insert(signer, signer);
+        } else {
+            panic!("Signer already exists.");
         }
     }
 
     /// Approve a proposal execution (Only signers can call this)
     pub fn approve_execution(&mut self, proposal_id: u64) {
         let signer = msg::sender();
-        if !self.signers.contains(&signer) {
+        if self.signers.get(signer).is_empty() {
             panic!("Only designated signers can approve execution.");
         }
 
         // remove instead of get lets us take ownership of the proposal
-        let mut proposal = self.proposals.get(proposal_id);
+        let mut proposal = self.proposals.setter(proposal_id);
 
         // Prevent double approvals
-        let mut approvals = self.signer_approvals.get(proposal_id);
-        if approvals.contains_key(&signer) {
-            // remember to re-insert the proposal
-            self.proposals.insert(proposal_id, proposal);
+        let mut approvals = self.signer_approvals.setter(proposal_id);
+
+        if approvals.get(signer) {
             panic!("Signer has already approved this proposal.");
         }
 
         approvals.insert(signer, true);
-        self.signer_approvals.insert(proposal_id, approvals);
-        proposal.approvals.set(proposal.approvals + StorageUint::from(1));
+        let current_approval_count = proposal.approvals.get();
+        proposal.approvals.set(current_approval_count + Uint::from(1));
         
 
-        let total_approvals: Uint<8, 1> = proposal.approvals.into();
+        let total_approvals = proposal.approvals.get();
 
         // If enough signers approve, execute the proposal
-        if total_approvals >= Uint::from(3) {
+        if total_approvals >= Uint::from(MULTI_SIG_THRESHOLD) {
             self.execute_proposal(proposal_id);
         }
-
-        // we re-insert the modified proposal
-        self.proposals.insert(proposal_id, proposal);
     }
 
     /// Execute a proposal if it meets all conditions
     pub fn execute_proposal(&mut self, proposal_id: u64) {
-        let mut proposal = self.proposals.get(proposal_id).unwrap();
+        let mut proposal = self.proposals.setter(proposal_id);
 
         // Ensure the proposal is still valid
-        // TODO: fix this with another function that finds the current timestamp
-        if msg::block_timestamp() > proposal.expiry_timestamp {
+        if block::timestamp() > proposal.expiry_timestamp.get().to() {
             panic!("Proposal has expired.");
         }
 
         // Ensure AI review didn't flag it as too risky
-        if proposal.ai_risk_score > 75 {
+        if proposal.ai_risk_score.get().to::<u8>() > 75 {
             panic!("Proposal flagged as too risky.");
         }
 
         // Ensure it passed voting
-        if proposal.vote_yes <= proposal.vote_no {
+        if proposal.vote_yes.get() <= proposal.vote_no.get() {
             panic!("Proposal did not pass.");
         }
 
         // Ensure multi-sig approval threshold is met
-        if proposal.approvals < 3 {
+        if proposal.approvals.get().to::<u8>() < 3 {
             panic!("Proposal needs at least 3 multi-sig approvals.");
         }
 
         // Execute the function call
+        RawCall::new_delegate()   // configure a delegate call
+            .gas(2100)                       // supply 2100 gas
+            .skip_return_data()             // skip reading return data 
+            .call(proposal.action_target.get(), proposal.action_payload.get_bytes().as_ref()).expect("proposal call failed");
 
-        msg::call_raw(proposal.action_target, &proposal.action_payload);
-
-        proposal.executed = true;
-        self.proposals.insert(proposal_id, proposal);
+        proposal.executed.set(true);
     }
 }
 
