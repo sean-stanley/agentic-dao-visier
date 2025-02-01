@@ -77,7 +77,7 @@ dependencies = [
  "const-hex",
  "derive_more",
  "foldhash",
- "hashbrown",
+ "hashbrown 0.15.2",
  "hex-literal",
  "indexmap",
  "itoa",
@@ -750,6 +750,20 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0369ee1ad671834580515889b80f2ea915f23b8be8d0daa4bbaf2ac5c7590835"
 dependencies = [
  "cipher",
+]
+
+[[package]]
+name = "dashmap"
+version = "6.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5041cc499144891f3790297212f32a74fb938e5136a14943f338ef9e0ae276cf"
+dependencies = [
+ "cfg-if",
+ "crossbeam-utils",
+ "hashbrown 0.14.5",
+ "lock_api",
+ "once_cell",
+ "parking_lot_core",
 ]
 
 [[package]]
@@ -1613,6 +1627,12 @@ dependencies = [
 
 [[package]]
 name = "hashbrown"
+version = "0.14.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e5274423e17b7c9fc20b6e7e208532f9b19825d82dfd615708b70edd83df41f1"
+
+[[package]]
+name = "hashbrown"
 version = "0.15.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "bf151400ff0baff5465007dd2f3e717f3fe502074ca563069ce3a6629d07b289"
@@ -1939,7 +1959,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "62f822373a4fe84d4bb149bf54e584a7f4abec90e072ed49cda0edea5b95471f"
 dependencies = [
  "equivalent",
- "hashbrown",
+ "hashbrown 0.15.2",
  "serde",
 ]
 
@@ -2198,6 +2218,31 @@ dependencies = [
  "libc",
  "wasi",
  "windows-sys 0.52.0",
+]
+
+[[package]]
+name = "motsu"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8dc57234641c5dd30332b269b29ea11966496ca5b6e169eb6cf90e4092e84483"
+dependencies = [
+ "const-hex",
+ "dashmap",
+ "motsu-proc",
+ "once_cell",
+ "stylus-sdk",
+ "tiny-keccak",
+]
+
+[[package]]
+name = "motsu-proc"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1216edabfdae92f935e07c21df8880a494afcc18267af7c8fe60cb979ecd594e"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn 2.0.95",
 ]
 
 [[package]]
@@ -3448,9 +3493,10 @@ dependencies = [
  "dotenv",
  "ethers",
  "eyre",
- "hashbrown",
+ "hashbrown 0.15.2",
  "hex",
  "mini-alloc",
+ "motsu",
  "sha3",
  "stylus-sdk",
  "tokio",
