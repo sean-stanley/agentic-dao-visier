@@ -240,10 +240,13 @@ mod tests {
         assert_eq!(hash.len(), 32);
     }
 
-    // test contract deployment
+    // test stake tokens
     #[motsu::test]
-    fn test_deploy() {
-        let mut contract = DAO::new();
-        assert_eq!(contract.proposal_count.get(), 0);
+    fn it_stakes_tokens(contract: DAO) {
+        // display sender address
+        println!("Sender: {:?}", msg::sender());
+        contract.stake_tokens(U64::from(100));
+        assert_eq!(contract.staked_balances.get(msg::sender()), U64::from(100));
     }
+
 }
