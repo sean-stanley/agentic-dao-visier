@@ -99,7 +99,7 @@ impl DAO {
 
         // Prevent users from voting twice on the same proposal
         let mut already_voted = self.vote_records.setter(proposal_id);
-        if already_voted.get(voter).is_zero() {
+        if already_voted.get(voter).is_positive() {
             panic!("Voter has already voted on this proposal");
         }
 
@@ -249,6 +249,24 @@ mod tests {
         println!("Sender: {:?}", msg::sender());
         contract.stake_tokens(U64::from(100));
         assert_eq!(contract.staked_balances.get(msg::sender()), U64::from(100));
+    }
+
+    // test submit proposal
+    #[motsu::test]
+    fn it_submits_proposal(contract: DAO) {
+        let proposal_id = contract.submit_proposal("Test Proposal".to_string(), Address::default(), Vec::new());
+        let proposal = contract.proposals.get(proposal_id);
+        assert_eq!(proposal.proposer.get(), msg::sender());
+    }
+
+    // test vote
+    #[motsu::test]
+    fn it_votes(contract: DAO) {
+        contract.stake_tokens(U64::from(100));
+        let proposal_id = contract.submit_proposal("Test Proposal".to_string(), Address::default(), Vec::new());
+        contract.vote(proposal_id, true);
+        let proposal = contract.proposals.get(proposal_id);
+        assert_eq!(proposal.vote_yes.get(), U64::from(10));
     }
 
 }
