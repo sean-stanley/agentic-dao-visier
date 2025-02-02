@@ -13,7 +13,6 @@ use stylus_sdk::{alloy_primitives::Address, block, call::RawCall, msg, prelude::
 // use hashbrown::HashMap as Map; // alternate map implementation than StorageMap. Prefer StorageMap for persistent storage.
 use sha3::{Digest, Keccak256};
 
-
 const MULTI_SIG_THRESHOLD: u8 = 3;
 
 #[entrypoint]
@@ -267,6 +266,13 @@ mod tests {
         contract.vote(proposal_id, true);
         let proposal = contract.proposals.get(proposal_id);
         assert_eq!(proposal.vote_yes.get(), U64::from(10));
+    }
+
+    // test add signer
+    #[motsu::test]
+    fn it_adds_signer(contract: DAO) {
+        contract.add_signer(Address::default());
+        assert_eq!(contract.signers.get(Address::default()), Address::default());
     }
 
 }
