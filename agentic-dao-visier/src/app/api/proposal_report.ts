@@ -11,6 +11,11 @@ type ResponseData = {
   };
 };
 
+interface Amount {
+  amount: number;
+  asset: string;
+}
+
 const openai = new OpenAI({
   baseURL: "https://api.openai.com", // "https://api.deepseek.com",
   apiKey:
@@ -61,6 +66,7 @@ const DAO_INFO = {
   totalSupply: 1000000,
   circulatingSupply: 500000,
   inflationRate: 0.05,
+  delegates: 445e6
 };
 
 // Example contract data
@@ -99,8 +105,8 @@ const RESEARCHER = {
     submitterAddress: string,
     DAO_INFO: Record<string, string | number>,
     stakingDistributions: [string, number][],
-    treasuryState: Record<string, number | string>,
-    tokenomics: Record<string, number>,
+    treasuryState: Record<string, Amount>,
+    tokenomics: Record<string, number|string>,
     proposalAction: string,
     proposalTarget: string
   ) => `
@@ -150,17 +156,19 @@ export default async function handler(
   // TODO: get other proposals from the DAO
   const stakingDistributions: [string, number][] = []; // 2d array of [address, amount][]
 
-  // TODO:
+  // TODO: this could be an array of treasury sources from published addresses across various networks.
   const treasuryStatus = {
-    issued: 0,
-    staked: 0,
-    reserve: 0,
-    locked: 0,
+    issued:  { amount: 2.88e9, asset: 'ALG' },
+    staked:  { amount: 1.2e9, asset: 'ALG' },
+    reserve: { amount: 1.68e9, asset: 'USD' },
+    locked: { amount: 0.0, asset: 'ALG' },
   };
 
+  // 
   const tokenomics = {
-    totalSupply: 0,
-    circulatingSupply: 0,
+    token: "ALG",
+    totalSupply: 15.3e6,
+    circulatingSupply: 6.9e6,
     inflationRate: 0,
   };
 
