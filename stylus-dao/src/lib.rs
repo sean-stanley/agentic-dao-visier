@@ -1,3 +1,5 @@
+//! Stylus dao contract
+
 // Allow `cargo stylus export-abi` to generate a main function.
 #![cfg_attr(not(any(test, feature = "export-abi")), no_main)]
 extern crate alloc;
