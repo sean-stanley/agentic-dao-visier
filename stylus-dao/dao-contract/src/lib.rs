@@ -126,11 +126,7 @@ impl DAO {
     
     /// Designate trusted signers for multi-sig execution
     pub fn add_signer(&mut self, signer: Address) {
-        if self.signers.get(signer).is_empty() {
-            self.signers.insert(signer, signer);
-        } else {
-            panic!("Signer already exists.");
-        }
+        self.signers.insert(signer, signer);
     }
 
     /// Approve a proposal execution (Only signers can call this)
@@ -271,8 +267,8 @@ mod tests {
     // test add signer
     #[motsu::test]
     fn it_adds_signer(contract: DAO) {
-        contract.add_signer(Address::default());
-        assert_eq!(contract.signers.get(Address::default()), Address::default());
+        contract.add_signer(msg::sender());
+        assert_eq!(contract.signers.get(msg::sender()), msg::sender());
     }
 
 }
