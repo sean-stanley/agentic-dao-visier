@@ -193,9 +193,6 @@ impl DAO {
     }
 }
 
-
-
-
 /// Square root function for quadratic voting
 fn sqrt(n: u64) -> u64 {
     let mut x = n;
