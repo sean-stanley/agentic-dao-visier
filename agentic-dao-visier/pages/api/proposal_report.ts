@@ -24,6 +24,16 @@ interface Amount {
   asset: string;
 }
 
+export const config = {
+  api: {
+    bodyParser: {
+      sizeLimit: "5mb",
+    },
+  },
+  // Specifies the maximum allowed duration for this function to execute (in seconds)
+  maxDuration: 5*60 // 5 minutes to generate the report from LLM agents,
+};
+
 const openai = new OpenAI({
   baseURL: "https://api.openai.com", // "https://api.deepseek.com",
   apiKey:
