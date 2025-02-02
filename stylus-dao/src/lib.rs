@@ -219,3 +219,31 @@ fn generate_hash(text: &str) -> [u8; 32] {
     hash_array.copy_from_slice(&result[..32]);
     hash_array
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    // test the sqrt function
+    #[test]
+    fn test_sqrt() {
+        assert_eq!(sqrt(16), 4);
+        assert_eq!(sqrt(25), 5);
+        assert_eq!(sqrt(100), 10);
+    }
+
+    // test the hash function
+    #[test]
+    fn test_hash() {
+        let text = "Hello, world!";
+        let hash = generate_hash(text);
+        assert_eq!(hash.len(), 32);
+    }
+
+    // test contract deployment
+    #[motsu::test]
+    fn test_deploy() {
+        let mut contract = DAO::new();
+        assert_eq!(contract.proposal_count.get(), 0);
+    }
+}
