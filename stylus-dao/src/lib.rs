@@ -54,6 +54,8 @@ impl DAO {
         let current_balance = self.staked_balances.get(sender);
         if current_balance > Uint::from(0) {
             self.staked_balances.insert(sender, current_balance + amount);
+        } else {
+            self.staked_balances.insert(sender, amount);
         }
     }
 
