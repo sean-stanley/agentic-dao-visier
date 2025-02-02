@@ -11,6 +11,14 @@ type ResponseData = {
   };
 };
 
+
+interface AgentData {
+  proposal: string;
+  proposer: string;
+  target: string;
+  action: string;
+}
+
 interface Amount {
   amount: number;
   asset: string;
@@ -137,7 +145,7 @@ const RESEARCHER = {
   `,
 };
 
-// TODO
+// TODO refactor to just be a server-side function triggered by an event onchain
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<ResponseData>
@@ -147,24 +155,35 @@ export default async function handler(
     return;
   }
 
+  try {
+    const result = await makeReport(req.body as AgentData);
+    res.status(200).json(result);
+  } catch (error) {
+    console.error("Error parsing JSON report:", error);
+    res.status(500).json({ message: "Error parsing JSON report." });
+  }
+}
+
+
+export async function makeReport(data: AgentData): Promise<ResponseData> {
   // proposal data we assume is mainly a markdown version of the pitch for the proposal
   // proposer is the address of the proposer. Though could include more info
   // target is the address of the contract the proposal is targeting. This is most relevant if the proposal would modify a target outside of the DAO
   // action is the non-encoded function call that the proposal is suggesting. A plain-text version is actually possible to analyse.
-  const { proposal, proposer, target, action } = req.body;
+  const { proposal, proposer, target, action } = data;
 
   // TODO: get other proposals from the DAO
   const stakingDistributions: [string, number][] = []; // 2d array of [address, amount][]
 
   // TODO: this could be an array of treasury sources from published addresses across various networks.
   const treasuryStatus = {
-    issued:  { amount: 2.88e9, asset: 'ALG' },
-    staked:  { amount: 1.2e9, asset: 'ALG' },
-    reserve: { amount: 1.68e9, asset: 'USD' },
-    locked: { amount: 0.0, asset: 'ALG' },
+    issued: { amount: 2.88e9, asset: "ALG" },
+    staked: { amount: 1.2e9, asset: "ALG" },
+    reserve: { amount: 1.68e9, asset: "USD" },
+    locked: { amount: 0.0, asset: "ALG" },
   };
 
-  // 
+  //
   const tokenomics = {
     token: "ALG",
     totalSupply: 15.3e6,
@@ -237,24 +256,19 @@ export default async function handler(
   });
 
   if (proposalReview.choices[0].message.tool_calls?.length === 0) {
-    res.status(500).json({ message: "Error: No tool calls were made." });
-    return;
+    throw Error("Error: No tool calls were made.");
   }
 
-  try {
-    const review = JSON.parse(
-      proposalReview.choices[0].message.tool_calls?.[0].function.arguments ??
-        "{}"
-    );
-    if (review.hasOwnProperty("report") && review.hasOwnProperty("score")) {
-      res.status(200).json({
-        message: "Hello from Next.js!",
-        research: formattedReport,
-        review,
-      });
-    }
-  } catch (error) {
-    console.error("Error parsing JSON report:", error);
-    res.status(500).json({ message: "Error parsing JSON report." });
+  const review = JSON.parse(
+    proposalReview.choices[0].message.tool_calls?.[0].function.arguments ?? "{}"
+  );
+  if (review.hasOwnProperty("report") && review.hasOwnProperty("score")) {
+    return {
+      message: "Hello from Next.js!",
+      research: formattedReport,
+      review,
+    };
   }
+
+  throw new Error("Error parsing JSON report.");
 }
