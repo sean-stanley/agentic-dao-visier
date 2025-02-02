@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { AppProviders } from "./Providers";
+import MinimalFloatingTopNav from "./ui/dashboard/floating-top-nav";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,6 +31,7 @@ export default function RootLayout({
       >
         <AppProviders>
         {children}
+        <MinimalFloatingTopNav/>
         </AppProviders>
       </body>
     </html>
