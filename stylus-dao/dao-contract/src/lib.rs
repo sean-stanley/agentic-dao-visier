@@ -17,12 +17,12 @@ const MULTI_SIG_THRESHOLD: u8 = 3;
 
 // define events
 sol! {
-    event TokensStaked (address indexed sender, uint256 amount);
-    event ProposalSubmitted (address indexed proposer, uint64 proposal_id, bytes32 descriptionHash);
-    event VoteCast (address indexed voter, uint64 proposal_id, bool approve, uint256 power);
-    event SignerAdded (address indexed signer);
-    event ProposalApproved (address indexed signer, uint64 proposal_id);
-    event ProposalExecuted (uint64 proposal_id, address target);
+    event TokensStaked(address indexed sender, uint256 amount);
+    event ProposalSubmitted(address indexed proposer, uint64 proposal_id, bytes32 descriptionHash);
+    event VoteCast(address indexed voter, uint64 proposal_id, bool approve, uint256 power);
+    event SignerAdded(address indexed signer);
+    event ProposalApproved(address indexed signer, uint64 proposal_id);
+    event ProposalExecuted(uint64 proposal_id, address target);
 }
 
 #[entrypoint]
@@ -66,6 +66,12 @@ impl DAO {
         } else {
             self.staked_balances.insert(sender, amount);
         }
+
+        // emit event
+        evm::log(TokensStaked {
+            sender,
+            amount: amount.to(),
+        });
     }
 
     /// Submit a new proposal
@@ -277,5 +283,4 @@ mod tests {
         contract.add_signer(msg::sender());
         assert_eq!(contract.signers.get(msg::sender()), msg::sender());
     }
-
 }
