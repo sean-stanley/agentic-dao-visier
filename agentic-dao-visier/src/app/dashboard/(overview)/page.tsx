@@ -1,6 +1,7 @@
 import CardWrapper from '@/app/ui/dashboard/cards';
 import { Suspense } from 'react';
 import { CardSkeleton } from '@/app/ui/skeletons';
+import ProposalWrapper from '@/app/ui/proposal/ProposalWrapper';
  
 export default async function Page() {
   return (
@@ -13,6 +14,7 @@ export default async function Page() {
           <CardWrapper />
       </Suspense>
       </div>
+      <ProposalWrapper/>
     </main>
   );
 }
