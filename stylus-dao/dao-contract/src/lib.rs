@@ -9,11 +9,21 @@ use core::panic;
 use alloc::{string::String, vec::Vec};
 use alloy_primitives::{Uint, I64, U64};
 /// Import items from the SDK. The prelude contains common traits and macros.
-use stylus_sdk::{alloy_primitives::Address, block, call::RawCall, msg, prelude::*, storage::{StorageAddress, StorageBool, StorageBytes, StorageI64, StorageMap, StorageU64, StorageU8}};
+use stylus_sdk::{alloy_sol_types::sol, evm, alloy_primitives::Address, block, call::RawCall, msg, prelude::*, storage::{StorageAddress, StorageBool, StorageBytes, StorageI64, StorageMap, StorageU64, StorageU8}};
 // use hashbrown::HashMap as Map; // alternate map implementation than StorageMap. Prefer StorageMap for persistent storage.
 use sha3::{Digest, Keccak256};
 
 const MULTI_SIG_THRESHOLD: u8 = 3;
+
+// define events
+sol! {
+    event TokensStaked (address indexed sender, uint256 amount);
+    event ProposalSubmitted (address indexed proposer, uint64 proposal_id, bytes32 descriptionHash);
+    event VoteCast (address indexed voter, uint64 proposal_id, bool approve, uint256 power);
+    event SignerAdded (address indexed signer);
+    event ProposalApproved (address indexed signer, uint64 proposal_id);
+    event ProposalExecuted (uint64 proposal_id, address target);
+}
 
 #[entrypoint]
 #[storage]
