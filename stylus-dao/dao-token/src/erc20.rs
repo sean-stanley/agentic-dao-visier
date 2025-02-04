@@ -18,9 +18,6 @@ pub trait Erc20Params {
 
     /// Immutable token decimals
     const DECIMALS: u8;
-
-    /// Immutable token total supply
-    const TOTAL_SUPPLY: U256;
 }
 
 sol_storage! {
@@ -134,5 +131,74 @@ impl<T: Erc20Params> Erc20<T> {
     
             Ok(())
         }
+    }
+
+    // These methods are external to other contracts
+#[public]
+impl<T: Erc20Params> Erc20<T> {
+    /// Immutable token name
+    pub fn name() -> String {
+        T::NAME.into()
+    }
+
+    /// Immutable token symbol
+    pub fn symbol() -> String {
+        T::SYMBOL.into()
+    }
+
+    /// Immutable token decimals
+    pub fn decimals() -> u8 {
+        T::DECIMALS
+    }
+
+    /// Total supply of tokens
+    pub fn total_supply(&self) -> U256 {
+        self.total_supply.get()
+    }
+
+    /// Balance of `address`
+    pub fn balance_of(&self, owner: Address) -> U256 {
+        self.balances.get(owner)
+    }
+
+    /// Transfers `value` tokens from msg::sender() to `to`
+    pub fn transfer(&mut self, to: Address, value: U256) -> Result<bool, Erc20Error> {
+        self._transfer(msg::sender(), to, value)?;
+        Ok(true)
+    }
+
+    /// Transfers `value` tokens from `from` to `to`
+    /// (msg::sender() must be able to spend at least `value` tokens from `from`)
+    pub fn transfer_from(
+        &mut self,
+        from: Address,
+        to: Address,
+        value: U256,
+    ) -> Result<bool, Erc20Error> {
+        // Check msg::sender() allowance
+        let mut sender_allowances = self.allowances.setter(from);
+        let mut allowance = sender_allowances.setter(msg::sender());
+        let old_allowance = allowance.get();
+        if old_allowance < value {
+            return Err(Erc20Error::InsufficientAllowance(InsufficientAllowance {
+                owner: from,
+                spender: msg::sender(),
+                have: old_allowance,
+                want: value,
+            }));
+        }
+
+        // Decreases allowance
+        allowance.set(old_allowance - value);
+
+        // Calls the internal transfer function
+        self._transfer(from, to, value)?;
+
+        Ok(true)
+    }
+    
+    /// Returns the allowance of `spender` on `owner`'s tokens
+    pub fn allowance(&self, owner: Address, spender: Address) -> U256 {
+        self.allowances.getter(owner).get(spender)
     }
 }
