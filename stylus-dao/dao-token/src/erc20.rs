@@ -32,6 +32,9 @@ sol_storage! {
         /// Total supply of the token
         U256 total_supply;
 
+        /// owner of the contract (dao address)
+        Address owner
+
         /// Used to allow [`Erc20Params`]
         PhantomData<T> phantom;
     }
@@ -51,6 +54,22 @@ sol! {
 pub enum Erc20Error {
     InsufficientBalance(InsufficientBalance),
     InsufficientAllowance(InsufficientAllowance),
+}
+
+impl<T: Erc20Params> Erc20<T> {
+    /// Ensures that only the owner can call a function
+    fn requires_owner(&self) -> Result<(), &'static str> {
+        if msg::sender() != self.owner.get() {
+            return Err("Only the contract owner can call this function");
+        }
+        Ok(())
+    }
+}
+
+impl<T: Erc20Params> Erc20<T> {
+    pub fn initialize(&mut self) {
+        self.owner.set(msg::sender()); // Set the deployer as the owner
+    }
 }
 
 // Methods marked as "pub" here are usable outside of the erc20 module (i.e. they're callable from lib.rs)
@@ -87,6 +106,9 @@ impl<T: Erc20Params> Erc20<T> {
 
     /// Mints `value` tokens to `address`
     pub fn mint(&mut self, address: Address, value: U256) -> Result<(), Erc20Error> {
+
+        self.requires_owner()?;
+
         // Increasing balance
         let mut balance = self.balances.setter(address);
         let new_balance = balance.get() + value;
@@ -107,6 +129,9 @@ impl<T: Erc20Params> Erc20<T> {
 
         /// Burns `value` tokens from `address`
         pub fn burn(&mut self, address: Address, value: U256) -> Result<(), Erc20Error> {
+
+            self.requires_owner()?;
+
             // Decreasing balance
             let mut balance = self.balances.setter(address);
             let old_balance = balance.get();
@@ -129,6 +154,17 @@ impl<T: Erc20Params> Erc20<T> {
                 value,
             });
     
+            Ok(())
+        }
+
+        // Sets contract owner
+        pub fn set_owner(&mut self, owner: Address) {
+            self.owner.set(owner);
+        }
+
+        pub fn update_owner(&mut self, new_owner: Address) -> Result<(), &'static str> {
+            self.requires_owner()?; // Only owner can change ownership
+            self.owner.set(new_owner);
             Ok(())
         }
     }
@@ -196,7 +232,7 @@ impl<T: Erc20Params> Erc20<T> {
 
         Ok(true)
     }
-    
+
     /// Returns the allowance of `spender` on `owner`'s tokens
     pub fn allowance(&self, owner: Address, spender: Address) -> U256 {
         self.allowances.getter(owner).get(spender)

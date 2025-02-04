@@ -275,6 +275,11 @@ impl DAO {
 
         return proposal.ai_review_hash.get_bytes() == provided_hash;
     }
+
+    /// Set target address for governance token
+    pub fn set_governance_token(&mut self, token_address: Address) {
+        self.governance_token.set(token_address);
+    }
 }
 
 /// Square root function for quadratic voting
