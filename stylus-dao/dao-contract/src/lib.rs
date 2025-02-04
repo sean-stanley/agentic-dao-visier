@@ -164,6 +164,11 @@ impl DAO {
     /// Designate trusted signers for multi-sig execution
     pub fn add_signer(&mut self, signer: Address) {
         self.signers.insert(signer, signer);
+
+        // Emit SignerAdded event
+        evm::log(SignerAdded {
+            signer,
+        });
     }
 
     /// Approve a proposal execution (Only signers can call this)
@@ -187,6 +192,11 @@ impl DAO {
         let current_approval_count = proposal.approvals.get();
         proposal.approvals.set(current_approval_count + Uint::from(1));
         
+        // Emit ProposalApproved event
+        evm::log(ProposalApproved {
+            signer,
+            proposal_id,
+        });
 
         let total_approvals = proposal.approvals.get();
 
@@ -227,6 +237,12 @@ impl DAO {
             .call(proposal.action_target.get(), proposal.action_payload.get_bytes().as_ref()).expect("proposal call failed");
 
         proposal.executed.set(true);
+
+        // Emit ProposalExecuted event
+        evm::log(ProposalExecuted {
+            proposal_id,
+            target: proposal.action_target.get(),
+        });
     }
 }
 
