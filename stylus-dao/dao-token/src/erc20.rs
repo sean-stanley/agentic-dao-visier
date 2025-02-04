@@ -107,4 +107,32 @@ impl<T: Erc20Params> Erc20<T> {
 
         Ok(())
     }
+
+        /// Burns `value` tokens from `address`
+        pub fn burn(&mut self, address: Address, value: U256) -> Result<(), Erc20Error> {
+            // Decreasing balance
+            let mut balance = self.balances.setter(address);
+            let old_balance = balance.get();
+            if old_balance < value {
+                return Err(Erc20Error::InsufficientBalance(InsufficientBalance {
+                    from: address,
+                    have: old_balance,
+                    want: value,
+                }));
+            }
+            balance.set(old_balance - value);
+    
+            // Decreasing the total supply
+            self.total_supply.set(self.total_supply.get() - value);
+    
+            // Emitting the transfer event
+            evm::log(Transfer {
+                from: address,
+                to: Address::ZERO,
+                value,
+            });
+    
+            Ok(())
+        }
+    }
 }
