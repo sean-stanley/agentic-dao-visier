@@ -262,6 +262,13 @@ impl DAO {
         // Store the AI review hash
         proposal.ai_review_hash.set_bytes(ai_review_hash);
     }
+
+    /// Verify an AI review against the stored hash
+    pub fn verify_ai_review(&self, proposal_id: u64, provided_hash: [u8; 32]) -> bool {
+        let proposal = self.proposals.get(proposal_id);
+
+        return proposal.ai_review_hash.get_bytes() == provided_hash;
+    }
 }
 
 /// Square root function for quadratic voting
