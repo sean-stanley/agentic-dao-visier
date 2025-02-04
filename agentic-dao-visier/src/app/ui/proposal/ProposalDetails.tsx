@@ -61,6 +61,18 @@ export default function ProposalDetails({ proposal }: { proposal: ExtendedPropos
       <p className="mt-2 text-sm text-gray-700">
         {abstractText}
       </p>
+
+      {/* Abstract heading + content */}
+      <h2 className="mt-6 text-base font-semibold">Abstract</h2>
+      <p className="mt-2 text-sm text-gray-700">
+        {abstractText}
+      </p>
+
+      {/* Abstract heading + content */}
+      <h2 className="mt-6 text-base font-semibold">Abstract</h2>
+      <p className="mt-2 text-sm text-gray-700">
+        {abstractText}
+      </p>
     </div>
   );
 }
