@@ -7,7 +7,7 @@ export interface TimelineData {
   export interface Proposal {
     id: string;
     title: string;
-    status: string;     // e.g. 'ACTIVE', 'PENDING EXECUTION', 'EXECUTED'
+    status: string;     // e.g. 'ACTIVE', 'PENDING', 'EXECUTED'
     date: string;       // e.g. 'Jan 28th, 2025'
     treasury: string;   // e.g. 'Arbitrum Treasury'
     votesFor: number;

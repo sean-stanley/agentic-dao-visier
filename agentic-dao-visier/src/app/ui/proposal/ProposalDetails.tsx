@@ -13,7 +13,7 @@ function getStatusClasses(status: string) {
   switch (status) {
     case 'ACTIVE':
       return 'bg-purple-100 text-purple-600';
-    case 'PENDING EXECUTION':
+    case 'PENDING':
       return 'bg-blue-100 text-blue-600';
     case 'EXECUTED':
       return 'bg-green-100 text-green-600';

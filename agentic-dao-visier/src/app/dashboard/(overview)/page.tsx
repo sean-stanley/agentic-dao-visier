@@ -6,10 +6,13 @@ import ProposalWrapper from '@/app/ui/proposal/ProposalWrapper';
 export default async function Page() {
   return (
     <main>
+      <div className='flex justify-center'>
+      <h1>LOGO TODO </h1>
       <h1 className="mb-4 text-xl md:text-2xl">
-        AI Overview Dashboard
+        ArbitrumDAO Dashboard 
       </h1>
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      </div>
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
       <Suspense fallback={<CardSkeleton />}>
           <CardWrapper />
       </Suspense>
