@@ -7,7 +7,7 @@ extern crate alloc;
 use core::panic;
 
 use alloc::{string::String, vec::Vec};
-use alloy_primitives::{Uint, I64, U64};
+use alloy_primitives::{Uint, I64, U64, FixedBytes};
 /// Import items from the SDK. The prelude contains common traits and macros.
 use stylus_sdk::{alloy_sol_types::sol, evm, alloy_primitives::Address, block, call::RawCall, msg, prelude::*, storage::{StorageAddress, StorageBool, StorageBytes, StorageI64, StorageMap, StorageU64, StorageU8}};
 // use hashbrown::HashMap as Map; // alternate map implementation than StorageMap. Prefer StorageMap for persistent storage.
@@ -89,6 +89,7 @@ impl DAO {
         let mut proposal = self.proposals.setter(proposal_id.to());
         proposal.proposer.set(msg::sender());
         proposal.description_hash.set_bytes(description_hash);
+        let fixed_description_hash = FixedBytes::<32>::from(description_hash);
         proposal.expiry_timestamp.set(Uint::from(block::timestamp() + 604800)); // Example: 1 week from now
         proposal.action_target.set(action_target);
         proposal.action_payload.set_bytes(action_payload);
@@ -100,6 +101,14 @@ impl DAO {
         proposal.approvals.set(Uint::from(0));
 
         self.proposal_count.set(self.proposal_count.get() + Uint::from(1));
+
+        // emit event
+        evm::log(ProposalSubmitted {
+            proposer: msg::sender(),
+            proposal_id: proposal_id.to(),
+            descriptionHash: fixed_description_hash,
+        });
+                
         proposal_id.to()
     }
 
