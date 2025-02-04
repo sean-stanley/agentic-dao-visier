@@ -7,7 +7,6 @@ export default async function Page() {
   return (
     <main>
       <div className='flex justify-center'>
-      <h1>LOGO TODO </h1>
       <h1 className="mb-4 text-xl md:text-2xl">
         ArbitrumDAO Dashboard 
       </h1>
