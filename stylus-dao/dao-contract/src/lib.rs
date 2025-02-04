@@ -97,7 +97,7 @@ impl DAO {
         proposal.expiry_timestamp.set(Uint::from(block::timestamp() + 604800)); // Example: 1 week from now
         proposal.action_target.set(action_target);
         proposal.action_payload.set_bytes(action_payload);
-        proposal.ai_review_hash.set_bytes([0; 32]); // update later
+        proposal.ai_review_hash.set_bytes([0; 1]); // update later to full 32 bytes
         proposal.ai_risk_score.set(Uint::from(0)); // update later
         proposal.vote_yes.set(Uint::from(0));
         proposal.vote_no.set(Uint::from(0));
@@ -243,6 +243,24 @@ impl DAO {
             proposal_id,
             target: proposal.action_target.get(),
         });
+    }
+
+    /// Update a proposal with an AI review hash (Only once)
+    pub fn update_proposal_with_ai_review(&mut self, proposal_id: u64, ai_review_hash: [u8; 32]) {
+        let mut proposal = self.proposals.setter(proposal_id);
+
+        // Ensure the AI review hasn't already been set
+        if proposal.ai_review_hash.len() > 1 {
+            panic!("AI review hash already set for this proposal.");
+        }
+
+        // Validate hash format (must be exactly 32 bytes)
+        if ai_review_hash.len() != 32 {
+            panic!("Invalid AI review hash. Must be a Keccak256 hash.");
+        }
+
+        // Store the AI review hash
+        proposal.ai_review_hash.set_bytes(ai_review_hash);
     }
 }
 
