@@ -18,7 +18,7 @@ const MULTI_SIG_THRESHOLD: u8 = 3;
 // define events
 sol! {
     event TokensStaked(address indexed sender, uint256 amount);
-    event ProposalSubmitted(address indexed proposer, uint64 proposal_id, bytes32 descriptionHash);
+    event ProposalSubmitted(address indexed proposer, uint64 proposal_id, bytes32 descriptionHash, address action_target, bytes32 action_payload);
     event VoteCast(address indexed voter, uint64 proposal_id, bool approve, uint256 power);
     event SignerAdded(address indexed signer);
     event ProposalApproved(address indexed signer, uint64 proposal_id);
@@ -79,7 +79,7 @@ impl DAO {
         &mut self,
         description: String,
         action_target: Address,
-        action_payload: Vec<u8>,
+        action_payload: FixedBytes<32>,
     ) -> u64 {
         let proposal_id = self.proposal_count.get() + Uint::from(1);
         
@@ -94,9 +94,13 @@ impl DAO {
 
         // this hash is emitted
         let fixed_description_hash = FixedBytes::<32>::from(description_hash);
+
         proposal.expiry_timestamp.set(Uint::from(block::timestamp() + 604800)); // Example: 1 week from now
         proposal.action_target.set(action_target);
+
+        // this payload is stored
         proposal.action_payload.set_bytes(action_payload);
+
         proposal.ai_review_hash.set_bytes([0; 1]); // update later to full 32 bytes
         proposal.ai_risk_score.set(Uint::from(0)); // update later
         proposal.vote_yes.set(Uint::from(0));
@@ -111,6 +115,8 @@ impl DAO {
             proposer: msg::sender(),
             proposal_id: proposal_id.to(),
             descriptionHash: fixed_description_hash,
+            action_target: action_target,
+            action_payload: action_payload,
         });
                 
         proposal_id.to()
@@ -324,7 +330,7 @@ mod tests {
     // test submit proposal
     #[motsu::test]
     fn it_submits_proposal(contract: DAO) {
-        let proposal_id = contract.submit_proposal("Test Proposal".to_string(), Address::default(), Vec::new());
+        let proposal_id = contract.submit_proposal("Test Proposal".to_string(), Address::default(), FixedBytes::<32>::new([0; 32]));
         let proposal = contract.proposals.get(proposal_id);
         assert_eq!(proposal.proposer.get(), msg::sender());
     }
@@ -333,7 +339,7 @@ mod tests {
     #[motsu::test]
     fn it_votes(contract: DAO) {
         contract.stake_tokens(U64::from(100));
-        let proposal_id = contract.submit_proposal("Test Proposal".to_string(), Address::default(), Vec::new());
+        let proposal_id = contract.submit_proposal("Test Proposal".to_string(), Address::default(), FixedBytes::<32>::new([0; 32]));
         contract.vote(proposal_id, true);
         let proposal = contract.proposals.get(proposal_id);
         assert_eq!(proposal.vote_yes.get(), U64::from(10));
