@@ -53,7 +53,7 @@ export default async function ProposalWrapper() {
   return (
     <div className="flex flex-wrap gap-2 py-4 px-0">
     {proposals.map((proposal) => (
-      <Link className="w-full" key={proposal.id} href={`/dashboard/proposals/${proposal.id}`}>
+      <Link className="w-full" key={proposal.id} href={`/proposals/${proposal.id}`}>
         <ProposalCard proposal={proposal} />
       </Link>
     ))}
