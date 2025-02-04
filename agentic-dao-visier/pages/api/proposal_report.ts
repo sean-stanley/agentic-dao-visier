@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import OpenAI from "openai";
-// import { ethers } from "ethers";
+import { ethers, keccak256 } from "ethers";
 
 type ResponseData = {
   message: string;
@@ -22,6 +22,7 @@ interface AgentData {
 interface Amount {
   amount: number;
   asset: string;
+  sources?: number;
 }
 
 export const config = {
@@ -35,7 +36,7 @@ export const config = {
 };
 
 const openai = new OpenAI({
-  baseURL: "https://api.openai.com", // "https://api.deepseek.com",
+  // baseURL: "https://api.openai.com", // "https://api.deepseek.com",
   apiKey:
     process.env.DEEPSEEK_API_KEY ??
     process.env.OPENAI_API_KEY ??
@@ -43,8 +44,8 @@ const openai = new OpenAI({
 });
 
 const TOOL_NAME = "ReportFormatter";
-const REASONING_MODEL = "o3-mini-2025-01-31";
-const GENERAL_MODEL = "gpt-4o-2024-08-06";
+const REASONING_MODEL = "o1-preview";
+const GENERAL_MODEL = "gpt-4o-2024-11-20";
 
 const SYSTEM_PROMPT = `You are an AI governance advisor for a decentralized autonomous organization (DAO) running on Arbitrum Stylus. Your task is to analyze DAO proposals and generate a structured risk assessment. Consider potential risks, past governance trends, treasury sustainability, and voting manipulation. Provide an overall risk score from 0 to 100, where 0 is no risk and 100 is extremely high risk. Keep the response structured and include an analysis of financial, security, and governance risks. Only base your analysis on provided data—avoid speculation."
 
@@ -62,9 +63,12 @@ Will it introduce new financial liabilities?
 Does it modify smart contract permissions or system-critical parameters?
 Does it involve external contracts (cross-chain bridges, lending pools, oracles)?
 Is there a risk of a governance attack (e.g., reentrancy, vote buying)?
+Does the proposal action accurately reflect the description?
 4️⃣ Governance Risk Analysis
 
 Has this proposer submitted similar proposals before?
+Are any currently active proposals contradicting or conflicting with this one?
+Does the proposer have any conflicts of interest or might have some that are undeclared?
 Are large token holders disproportionately benefiting?
 Is this an urgent decision with a short timeline?
 5️⃣ Final Risk Score (0-100)
@@ -78,6 +82,7 @@ Justify the score with 2-3 supporting points.
 
 const DAO_INFO = {
   name: "Research Governance DAO",
+  contractAddress: "0xb8eFb605822C9141E243F9951015bEC43645fa7b", // this will change with future versions
   description:
     "A decentralized autonomous organization (DAO) that governs the Arbitrum Stylus network.",
   symbol: "ALG",
@@ -134,7 +139,11 @@ const RESEARCHER = {
     ${JSON.stringify(DAO_INFO, null, 2)}
 
     **Smart Contract ABI**
-    ${ABI}
+    ${ABI.map((sig) => `- ${sig}`).join("\n")}
+
+    **Previous Proposals**
+    [] // Not yet implemented
+    
 
     **Staking distributions** Highlight the whales on this proposal.
     ${stakingDistributions
@@ -142,10 +151,10 @@ const RESEARCHER = {
       .join("\n")}
 
     **Treasury status** What is the current state of the treasury?
-    ${treasuryState}
+    ${JSON.stringify(treasuryState)}
 
     **Tokenomics** What are the overarching tokenomics of the chain and token
-    ${tokenomics}
+    ${JSON.stringify(tokenomics)}
 
     **Submitter** 
     Address: ${submitterAddress}
@@ -167,11 +176,18 @@ export default async function handler(
 
   try {
     const result = await makeReport(req.body as AgentData);
+    const id = makeReportHash(result?.review?.report ?? "");
     res.status(200).json(result);
   } catch (error) {
-    console.error("Error parsing JSON report:", error);
-    res.status(500).json({ message: "Error parsing JSON report." });
+    console.error(error);
+    // TODO: log error to a service like Sentry or LogRocket
+    // TODO: return a secure message that doesn't leak implementation details to the client
+    res.status(500).json({ message: (error as Error).message });
   }
+}
+
+export function makeReportHash(report: string): string {
+  return keccak256(ethers.toUtf8Bytes(report))
 }
 
 
@@ -181,15 +197,17 @@ export async function makeReport(data: AgentData): Promise<ResponseData> {
   // target is the address of the contract the proposal is targeting. This is most relevant if the proposal would modify a target outside of the DAO
   // action is the non-encoded function call that the proposal is suggesting. A plain-text version is actually possible to analyse.
   const { proposal, proposer, target, action } = data;
+  console.log(target, action, proposer, proposal);
 
   // TODO: get other proposals from the DAO
-  const stakingDistributions: [string, number][] = []; // 2d array of [address, amount][]
+  const stakingDistributions: [string, number][] = [
+    ["0x6Ee1Cc0Db59e31F43c6712759C9A20123FCa1815", 100000],
+  ]; // 2d array of [address, amount][]
 
   // TODO: this could be an array of treasury sources from published addresses across various networks.
   const treasuryStatus = {
     issued: { amount: 2.88e9, asset: "ALG" },
-    staked: { amount: 1.2e9, asset: "ALG" },
-    reserve: { amount: 1.68e9, asset: "USD" },
+    staked: { amount: 1.2e9, asset: "ALG", sources: 10 },
     locked: { amount: 0.0, asset: "ALG" },
   };
 
@@ -201,20 +219,24 @@ export async function makeReport(data: AgentData): Promise<ResponseData> {
     inflationRate: 0,
   };
 
+  const research_message = RESEARCHER.prompt(
+    proposer,
+    DAO_INFO,
+    stakingDistributions,
+    treasuryStatus,
+    tokenomics,
+    action,
+    target
+  );
+
+  console.log(research_message)
+
   const researcherResult = await openai.chat.completions.create({
     model: RESEARCHER.model,
     messages: [
       {
         role: "system",
-        content: RESEARCHER.prompt(
-          proposer,
-          DAO_INFO,
-          stakingDistributions,
-          treasuryStatus,
-          tokenomics,
-          action,
-          target
-        ),
+        content: research_message,
       },
     ],
   });
@@ -225,7 +247,7 @@ export async function makeReport(data: AgentData): Promise<ResponseData> {
   // BONUS: could split the researcher into various API tool calls to let the reasoning model choose when to lookup extra info and process in a loop until it has what it thinks is relevant info for the proposal.
   // In reality though this likely won't save much token use over just doing it all in one go and front-loading with possibly impertinent info.
   const proposalReview = await openai.chat.completions.create({
-    model: REASONING_MODEL,
+    model: GENERAL_MODEL,
     messages: [
       {
         role: "system",
@@ -235,7 +257,7 @@ export async function makeReport(data: AgentData): Promise<ResponseData> {
         role: "system",
         content: formattedReport,
       },
-      { role: "user", content: proposal },
+      { role: "user", content: `DAO Proposal from submitter:\n\n${proposal}` },
     ],
     tools: [
       {
@@ -279,6 +301,6 @@ export async function makeReport(data: AgentData): Promise<ResponseData> {
       review,
     };
   }
-
+  console.error(JSON.stringify(proposalReview, null, 2));
   throw new Error("Error parsing JSON report.");
 }
