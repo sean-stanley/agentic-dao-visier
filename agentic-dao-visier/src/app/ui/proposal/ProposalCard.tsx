@@ -2,17 +2,32 @@
 
 import { Proposal } from "@/app/types";
 
+// Return background/text classes for status
 function getStatusClasses(status: string) {
   switch (status) {
     case 'ACTIVE':
       return 'bg-purple-100 text-purple-600';
-    case 'PENDING EXECUTION':
+    case 'PENDING':
       return 'bg-blue-100 text-blue-600';
     case 'EXECUTED':
       return 'bg-green-100 text-green-600';
     default:
       return 'bg-gray-100 text-gray-600';
   }
+}
+
+// Abbreviates numbers (e.g. 18000 -> "18K", 2300000 -> "2.3M")
+function formatNumber(num: number): string {
+  if (num >= 1_000_000_000) {
+    return (num / 1_000_000_000).toFixed(1).replace(/\.0$/, '') + 'B';
+  }
+  if (num >= 1_000_000) {
+    return (num / 1_000_000).toFixed(1).replace(/\.0$/, '') + 'M';
+  }
+  if (num >= 1_000) {
+    return (num / 1_000).toFixed(1).replace(/\.0$/, '') + 'K';
+  }
+  return num.toString();
 }
 
 // A small pill-like component for the status
@@ -37,42 +52,71 @@ export default function ProposalCard({ proposal }: { proposal: Proposal }) {
     addresses,
   } = proposal;
 
+  // Calculate percentages for the vote bar.
+  const totalForBar = votesFor + votesAgainst;
+  const forPercentage =
+    totalForBar > 0 ? (votesFor / totalForBar) * 100 : 0;
+  const againstPercentage = totalForBar > 0 ? 100 - forPercentage : 0;
+
   return (
-    <div className="w-full rounded-xl bg-gray-50 p-2 shadow-sm">
+    <div className="w-full rounded-xl bg-gray-50 p-4 shadow-sm">
       {/* Header row (title + date + status) */}
-      <div className="flex items-center justify-between p-4">
-        <h3 className="text-sm font-medium">{title}</h3>
+      <div className="flex items-center justify-between mb-2">
+        <h3 className="text-l font-bold text-gray-800">{title}</h3>
         <div className="flex items-center space-x-2">
           <StatusBadge status={status} />
-          <span className="text-xs text-gray-500">{date}</span>
+          <span className="text-sm text-gray-500">{date}</span>
         </div>
       </div>
 
-      {/* Subtitle (treasury / subheading) */}
-      <div className="px-4 text-xs text-gray-600">{treasury}</div>
+      {/* Treasury / subtitle */}
+      <div className="px-1 mb-4 text-sm text-gray-600">{treasury}</div>
 
       {/* Stats row */}
-      <div className="flex flex-wrap items-center justify-between px-4 pb-4 pt-2">
-        <div className="flex flex-col items-start">
+      <div className="flex flex-row justify-between">
+        <div className="flex flex-col">
           <span className="text-sm text-gray-500">Votes for</span>
-          <span className="text-xl">{votesFor}</span>
+          <span className="text-xl font-semibold text-green-600">
+            {formatNumber(votesFor)}
+          </span>
         </div>
-
-        <div className="flex flex-col items-start">
+        <div className="flex flex-col">
           <span className="text-sm text-gray-500">Votes against</span>
-          <span className="text-xl">{votesAgainst}</span>
+          <span className="text-xl font-semibold text-red-600">
+            {formatNumber(votesAgainst)}
+          </span>
         </div>
 
-        <div className="flex flex-col items-start">
+        <div className="flex flex-col">
           <span className="text-sm text-gray-500">Total Votes</span>
-          <span className="text-xl">{totalVotes}</span>
+          <span className="text-xl font-semibold text-gray-800">
+            {formatNumber(totalVotes)}
+          </span>
         </div>
 
-        <div className="flex flex-col items-start">
+        <div className="flex flex-col">
           <span className="text-sm text-gray-500">Addresses</span>
-          <span className="text-xl">{addresses}</span>
+          <span className="text-xl font-semibold text-gray-800">
+            {addresses}
+          </span>
         </div>
       </div>
+
+      {/* Visual vote bar */}
+      <div className="py-2">
+      <div className="relative h-2 w-full rounded-full bg-gray-200 overflow-hidden">
+        <div
+          className="h-full bg-green-500"
+          style={{ width: `${forPercentage}%` }}
+        />
+        <div
+          className="absolute top-0 right-0 h-full bg-red-500"
+          style={{ width: `${againstPercentage}%` }}
+        />
+      </div>
+
+      </div>
+      
     </div>
   );
 }

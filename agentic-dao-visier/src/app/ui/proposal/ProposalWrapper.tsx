@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import ProposalCard from './ProposalCard';
 
 export default async function ProposalWrapper() {
@@ -28,7 +29,7 @@ export default async function ProposalWrapper() {
     {
       id: '3',
       title: '[Constitutional AIP] Activate Arbitrum BoLD + Infura Nova Va...',
-      status: 'PENDING EXECUTION',
+      status: 'PENDING',
       date: 'Jan 7th, 2025',
       treasury: 'Arbitrum Core',
       votesFor: 210660000,
@@ -50,10 +51,12 @@ export default async function ProposalWrapper() {
   ];
 
   return (
-    <div className="flex flex-wrap gap-4 py-4 px-0">
-      {proposals.map((proposal) => (
-        <ProposalCard key={proposal.id} proposal={proposal} />
-      ))}
-    </div>
+    <div className="flex flex-wrap gap-2 py-4 px-0">
+    {proposals.map((proposal) => (
+      <Link className="w-full" key={proposal.id} href={`/dashboard/proposals/${proposal.id}`}>
+        <ProposalCard proposal={proposal} />
+      </Link>
+    ))}
+  </div>
   );
 }

@@ -3,20 +3,19 @@
 import {
   UserGroupIcon,
   GlobeAltIcon,
-  DocumentDuplicateIcon, ChatBubbleOvalLeftEllipsisIcon, BanknotesIcon
+  DocumentDuplicateIcon, BanknotesIcon
 } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import clsx from 'clsx';
 
 const links = [
-  { name: 'AI Overview', href: '/dashboard', icon: GlobeAltIcon },
+  { name: 'Dashboard', href: '/dashboard', icon: GlobeAltIcon },
   {
     name: 'Proposals',
     href: '/dashboard/proposals',
     icon: DocumentDuplicateIcon,
   },
-  { name: 'Discussions', href: '/dashboard/discussions', icon: ChatBubbleOvalLeftEllipsisIcon },
   { name: 'Treasury', href: '/dashboard/treasury', icon: BanknotesIcon },
   { name: 'Delegates', href: '/dashboard/delegates', icon: UserGroupIcon },
 ];
