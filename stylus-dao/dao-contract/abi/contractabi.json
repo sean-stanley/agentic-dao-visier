@@ -120,7 +120,7 @@
           "indexed": true
         },
         {
-          "name": "descriptionHash",
+          "name": "fixed_description_hash",
           "type": "bytes32",
           "indexed": false
         }
