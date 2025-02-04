@@ -88,7 +88,11 @@ impl DAO {
         let description_hash = generate_hash(&description);
         let mut proposal = self.proposals.setter(proposal_id.to());
         proposal.proposer.set(msg::sender());
+
+        // this hash is stored
         proposal.description_hash.set_bytes(description_hash);
+
+        // this hash is emitted
         let fixed_description_hash = FixedBytes::<32>::from(description_hash);
         proposal.expiry_timestamp.set(Uint::from(block::timestamp() + 604800)); // Example: 1 week from now
         proposal.action_target.set(action_target);
@@ -146,6 +150,14 @@ impl DAO {
         // Lock the staked tokens for this voter until the voting period ends
         // TODO: fix this with another function that actually transfers the funds to the contract's wallet
         self.locked_stakes.insert(voter, staked_tokens);
+
+        // Emit VoteCast event
+        evm::log(VoteCast {
+            voter,
+            proposal_id,
+            approve,
+            power: vote_power.to(),
+        });
     }
     
     
