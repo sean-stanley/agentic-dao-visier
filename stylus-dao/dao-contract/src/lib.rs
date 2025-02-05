@@ -5,9 +5,10 @@
 extern crate alloc;
 
 use core::panic;
+use std::io::Read;
 
 use alloc::{string::String, vec::Vec};
-use alloy_primitives::{Uint, I64, U64, FixedBytes};
+use alloy_primitives::{Uint, I64, U64, U256, FixedBytes};
 /// Import items from the SDK. The prelude contains common traits and macros.
 use stylus_sdk::{alloy_sol_types::sol, evm, alloy_primitives::Address, block, call::RawCall, msg, prelude::*, storage::{StorageAddress, StorageBool, StorageBytes, StorageI64, StorageMap, StorageU64, StorageU8}};
 // use hashbrown::HashMap as Map; // alternate map implementation than StorageMap. Prefer StorageMap for persistent storage.
@@ -15,7 +16,7 @@ use sha3::{Digest, Keccak256};
 
 const MULTI_SIG_THRESHOLD: u8 = 3;
 
-// define events
+// defining events and errors
 sol! {
     event TokensStaked(address indexed sender, uint256 amount);
     event ProposalSubmitted(address indexed proposer, uint64 proposal_id, bytes32 descriptionHash, address action_target, bytes32 action_payload);
@@ -23,6 +24,9 @@ sol! {
     event SignerAdded(address indexed signer);
     event ProposalApproved(address indexed signer, uint64 proposal_id);
     event ProposalExecuted(uint64 proposal_id, address target);
+    event MintingSuccess(address indexed to, uint256 value);
+
+    error NotOwner();
 }
 
 #[entrypoint]
@@ -36,6 +40,7 @@ pub struct DAO {
     locked_stakes: StorageMap<Address, StorageU64>,
     signers: StorageMap<Address, StorageAddress>,  // Multi-sig signers
     signer_approvals: StorageMap<u64, StorageMap<Address, StorageBool>>,  // Proposal ID -> (Signer -> Approved)
+    owner: StorageAddress,
 }
 
 
@@ -57,6 +62,20 @@ pub struct Proposal {
 /// Multi-sig verification: Requires at least 3 signers to approve before execution
 #[public]
 impl DAO {
+
+    /// Initialize the DAO contract with token contract address and owner
+    pub fn init(&mut self, token_address: Address) {
+        self.owner.set(msg::sender());
+        self.governance_token.set(token_address);
+    }
+
+    /// Modifier to ensure that only the owner can call certain functions
+    fn only_owner(&self) {
+        if msg::sender() != self.owner.get() {
+            panic!("Not the owner");
+        }
+    }    
+
     // /// Stake governance tokens for voting (Tokens are locked until the voting period ends)
     pub fn stake_tokens(&mut self, amount: U64) {
         let sender = msg::sender();
