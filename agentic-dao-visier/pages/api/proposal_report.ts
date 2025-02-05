@@ -13,10 +13,11 @@ type ResponseData = {
 
 
 interface AgentData {
+  id: number;
   proposal: string;
   proposer: string;
-  target: string;
-  action: string;
+  action_target: string;
+  action_payload: string;
 }
 
 interface Amount {
@@ -82,7 +83,7 @@ Justify the score with 2-3 supporting points.
 
 const DAO_INFO = {
   name: "Research Governance DAO",
-  contractAddress: "0xb8eFb605822C9141E243F9951015bEC43645fa7b", // this will change with future versions
+  contractAddress: process.env.CONTRACT_ADDRESS ?? '', // this will change with future versions
   description:
     "A decentralized autonomous organization (DAO) that governs the Arbitrum Stylus network.",
   symbol: "ALG",
@@ -99,7 +100,9 @@ const ABI = [
   "function balanceOf(address owner) view returns (uint256)",
   "function stake(address to, uint256 amount)",
   "function unstake(address to, uint256 amount)",
-  "function treasury() view returns (address)",  
+  "function treasury() view returns (address)",
+  "function update_proposal_with_ai_review(uint256 proposal_id, bytes32 ai_review_hash) public",
+  "function verify_ai_review(uint256 proposal_id, bytes32 provided_hash) public view returns (bool)",
   // Add other function signatures if necessary
 ];
 
@@ -175,9 +178,18 @@ export default async function handler(
   }
 
   try {
-    const result = await makeReport(req.body as AgentData);
+    const body = req.body as AgentData;
+    const result = await makeReport(body);
     const id = makeReportHash(result?.review?.report ?? "");
+
+    // ready to send report to client
     res.status(200).json(result);
+
+    // TODO: store the review on-chain
+
+    
+    // update proposal with AI review hash
+    await updateProposal(body.id, id);
   } catch (error) {
     console.error(error);
     // TODO: log error to a service like Sentry or LogRocket
@@ -190,13 +202,37 @@ export function makeReportHash(report: string): string {
   return keccak256(ethers.toUtf8Bytes(report))
 }
 
+export async function updateProposal(proposalId: number, hashId: string): Promise<void> {
+  const provider = new ethers.JsonRpcProvider(process.env.ARBITRUM_RPC_URL);
+  const wallet = new ethers.Wallet(process.env.PRIVATE_KEY ?? '', provider);
+
+  const contract = new ethers.Contract(
+    process.env.CONTRACT_ADDRESS ?? '',
+    ABI,
+    wallet
+  );
+
+  try {
+    const tx = await contract.update_proposal_with_ai_review(
+      proposalId,
+      hashId
+    );
+    console.log("Transaction sent! Waiting for confirmation...");
+    await tx.wait();
+    console.log(`✅ AI review hash added! Tx Hash: ${tx.hash}`);
+  } catch (error) {
+    console.error("❌ Error updating proposal:", error);
+  }
+
+}
+
 
 export async function makeReport(data: AgentData): Promise<ResponseData> {
   // proposal data we assume is mainly a markdown version of the pitch for the proposal
   // proposer is the address of the proposer. Though could include more info
   // target is the address of the contract the proposal is targeting. This is most relevant if the proposal would modify a target outside of the DAO
   // action is the non-encoded function call that the proposal is suggesting. A plain-text version is actually possible to analyse.
-  const { proposal, proposer, target, action } = data;
+  const { proposal, proposer, action_payload: action, action_target: target } = data;
   console.log(target, action, proposer, proposal);
 
   // TODO: get other proposals from the DAO
@@ -211,7 +247,7 @@ export async function makeReport(data: AgentData): Promise<ResponseData> {
     locked: { amount: 0.0, asset: "ALG" },
   };
 
-  //
+  //  
   const tokenomics = {
     token: "ALG",
     totalSupply: 15.3e6,

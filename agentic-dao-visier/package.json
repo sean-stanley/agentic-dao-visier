@@ -11,6 +11,7 @@
   "dependencies": {
     "ethers": "^6.13.5",
     "next": "15.1.6",
+    "nillion-sv-wrappers": "^1.0.6",
     "openai": "^4.82.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
