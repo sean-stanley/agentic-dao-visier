@@ -116,8 +116,8 @@ impl<T: Erc20Params> Erc20<T> {
 
 struct StylusTokenParams;
 impl Erc20Params for StylusTokenParams {
-    const NAME: &'static str = "StylusToken";
-    const SYMBOL: &'static str = "STK";
+    const NAME: &'static str = "Agentic Dao";
+    const SYMBOL: &'static str = "DAO";
     const DECIMALS: u8 = 18;
 }
 
