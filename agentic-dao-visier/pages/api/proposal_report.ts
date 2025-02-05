@@ -1,14 +1,13 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import OpenAI from "openai";
 import { ethers, keccak256 } from "ethers";
+import insertReview from "./nillion/insert_review";
+import { ReviewResult } from "./nillion/types/review";
 
 type ResponseData = {
   message: string;
   research?: string;
-  review?: {
-    report: string;
-    score: number;
-  };
+  review?: ReviewResult
 };
 
 
@@ -185,9 +184,9 @@ export default async function handler(
     // ready to send report to client
     res.status(200).json(result);
 
-    // TODO: store the review on-chain
+    // TODO: store the review on Nillion nodes
+    insertReview(result)
 
-    
     // update proposal with AI review hash
     await updateProposal(body.id, id);
   } catch (error) {

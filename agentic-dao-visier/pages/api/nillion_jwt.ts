@@ -29,11 +29,11 @@ export default async function handler(
 
     // generate api tokens for all nodes in the org config
     const jwtToken = await org.generateTokensForAllNodes();
-    res.status(200).json({ jwt: jwtToken });
-  } catch (error: any) {
-    console.error("❌ Failed to use SecretVaultWrapper:", error.message);
+    res.status(200).json({ jwt_tokens: jwtToken });
+  } catch (error) {
+    console.error("❌ Failed to use SecretVaultWrapper:", error);
     res
       .status(500)
-      .json({ jwt: "", error: "Could not generate API key for Nillion" });
+      .json({ jwt_tokens: [], error: "Could not generate API key for Nillion" });
   }
 }

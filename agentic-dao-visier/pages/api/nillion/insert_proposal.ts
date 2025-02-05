@@ -1,10 +1,8 @@
 import { SecretVaultWrapper } from "nillion-sv-wrappers";
-import { v4 as uuidv4 } from "uuid";
-import { orgConfig } from "./nillionOrgConfig.js";
+import { orgConfig } from "./nillion_org_config.js";
 import { keccak256 } from "ethers";
 
 const PROPOSAL_SCHEMA_ID = "f4d58805-f58b-4388-b1ce-9793e882de2a";
-const REVIEW_SCHEMA_ID = "6dbfbb0f-2427-411a-ab90-902effe3f8e2";
 
 const [, , proposal] = process.argv;
 

@@ -18,6 +18,7 @@ export interface Review {
     review: string;
     review_hash: string;
     contract: string;
+    review_score: number;
 }
 
 class NilDBAPI {

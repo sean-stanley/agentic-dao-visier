@@ -38,6 +38,6 @@
         "maximum": 100
       }
     },
-    "required": ["_id", "proposal_id", "contract", "research", "proposal", "review", "review_id", "review_hash", "review_score"]
+    "required": ["_id", "proposal_id", "contract", "research", "proposal", "review", "review_hash", "review_score"]
   }
 }
