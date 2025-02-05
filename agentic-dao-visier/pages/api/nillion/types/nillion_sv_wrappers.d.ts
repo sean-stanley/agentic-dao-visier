@@ -13,6 +13,7 @@ declare module 'nillion-sv-wrappers' {
       createSchema(schema: any, collectionName: string): Promise<any>;
       writeToNodes(data: any): Promise<any>;
       readFromNodes(query: any): Promise<any>;
+      generateTokensForAllNodes(): Promise<string>
     }
 
     export class NilQLWrapper {

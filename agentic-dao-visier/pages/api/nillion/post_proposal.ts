@@ -6,6 +6,8 @@ import { keccak256 } from "ethers";
 const PROPOSAL_SCHEMA_ID = "f4d58805-f58b-4388-b1ce-9793e882de2a";
 const REVIEW_SCHEMA_ID = "6dbfbb0f-2427-411a-ab90-902effe3f8e2";
 
+const [, , proposal] = process.argv;
+
 const makeProposalRecord = (proposal: string) => {
   const proposalHash = keccak256(proposal);
 
@@ -48,14 +50,11 @@ async function main(proposal: string) {
     const decryptedCollectionData = await proposalCollection.readFromNodes({});
 
     // Log first 5 records
-    console.log(
-      "Most recent records",
-      decryptedCollectionData.slice(0, 5)
-    );
+    console.log("Most recent records", decryptedCollectionData.slice(0, 5));
   } catch (error) {
     console.error("❌ SecretVaultWrapper error:", error.message);
     process.exit(1);
   }
 }
 
-main("Zcash is the best privacy coin");
+main(proposal);
