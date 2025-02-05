@@ -1,10 +1,10 @@
 [package]
-name = "stylus-dao"
+name = "stylus-token"
 version = "0.1.10"
 edition = "2021"
 license = "MIT OR Apache-2.0"
 keywords = ["arbitrum", "ethereum", "stylus", "alloy"]
-description = "Stylus DAO governance contract"
+description = "Stylus DAO governance token"
 
 [dependencies]
 alloy-primitives = "=0.8.14"
@@ -27,7 +27,7 @@ export-abi = ["stylus-sdk/export-abi"]
 debug = ["stylus-sdk/debug"]
 
 [[bin]]
-name = "stylus-dao"
+name = "stylus-token"
 path = "src/main.rs"
 
 [lib]
