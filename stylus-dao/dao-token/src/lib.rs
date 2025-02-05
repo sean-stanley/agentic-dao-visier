@@ -126,24 +126,61 @@ sol_storage! {
     struct StylusToken {
         #[borrow]
         Erc20<StylusTokenParams> erc20;
+        address owner;
     }
 }
 
 #[public]
 #[inherit(Erc20<StylusTokenParams>)]
+
 impl StylusToken {
+    /// Initialize owner on contract deployment
+    pub fn init(&mut self) {
+        self.owner.set(msg::sender());
+    }
+
+    /// Modifier to check if the caller is the owner
+    fn only_owner(&self) -> Result<(), Erc20Error> {
+        if msg::sender() != self.owner.get() {
+            return Err(Erc20Error::InsufficientBalance(InsufficientBalance {
+                from: msg::sender(),
+                have: U256::from(0),
+                want: U256::from(0),
+            }));
+        }
+        Ok(())
+    }
+
+    /// Mint tokens (only owner)
     pub fn mint(&mut self, value: U256) -> Result<(), Erc20Error> {
+        self.only_owner()?;  // Check if sender is owner
         self.erc20.mint(msg::sender(), value)?;
         Ok(())
     }
 
+    /// Mint tokens to specific address (only owner)
     pub fn mint_to(&mut self, to: Address, value: U256) -> Result<(), Erc20Error> {
+        self.only_owner()?;  // Check if sender is owner
         self.erc20.mint(to, value)?;
         Ok(())
     }
 
+    /// Burn tokens
     pub fn burn(&mut self, value: U256) -> Result<(), Erc20Error> {
         self.erc20.burn(msg::sender(), value)?;
         Ok(())
     }
+
+    /// Change owner (only owner)
+    pub fn set_owner(&mut self, new_owner: Address) -> Result<(), Erc20Error> {
+        self.only_owner()?;  // Check if sender is owner
+        self.owner.set(new_owner);
+        Ok(())
+    }
+
+    /// Get the current owner
+    pub fn get_owner(&self) -> Address {
+        self.owner.get()
+    }
 }
+
