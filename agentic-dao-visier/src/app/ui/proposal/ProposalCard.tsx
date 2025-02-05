@@ -59,7 +59,7 @@ export default function ProposalCard({ proposal }: { proposal: Proposal }) {
   const againstPercentage = totalForBar > 0 ? 100 - forPercentage : 0;
 
   return (
-    <div className="w-full rounded-xl bg-gray-50 p-4 shadow-sm">
+    <div className="w-full rounded-xl bg-gray-50 p-4 shadow-md">
       {/* Header row (title + date + status) */}
       <div className="flex items-center justify-between mb-2">
         <h3 className="text-l font-bold text-gray-800">{title}</h3>
@@ -70,7 +70,7 @@ export default function ProposalCard({ proposal }: { proposal: Proposal }) {
       </div>
 
       {/* Treasury / subtitle */}
-      <div className="px-1 mb-4 text-sm text-gray-600">{treasury}</div>
+      <div className="mb-4 text-sm text-gray-600">{treasury}</div>
 
       {/* Stats row */}
       <div className="flex flex-row justify-between">

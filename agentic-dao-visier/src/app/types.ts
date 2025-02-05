@@ -28,3 +28,11 @@ export interface TimelineData {
     against: { amount: string; percentage: string };
     abstain: { amount: string; percentage: string };
   }
+
+
+export interface Asset {
+  name: string;
+  asset: string;
+  amount: number;
+  logo?: string;
+}

@@ -42,7 +42,7 @@ export default function ProposalDetails({ proposal }: { proposal: ExtendedPropos
   } = proposal;
 
   return (
-    <div className="w-full rounded-xl bg-gray-50 p-4 shadow-sm">
+    <div className="w-full rounded-xl bg-gray-50 p-4 shadow-md">
       {/* Title + Status */}
       <div className="flex items-start justify-between">
         <h1 className="text-xl font-semibold">{title}</h1>
