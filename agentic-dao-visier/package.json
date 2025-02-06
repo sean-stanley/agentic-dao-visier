@@ -19,12 +19,12 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "web3": "^4.16.0",
-    "viem": "^2.22.17",
-    "wagmi": "^2.14.9"
+    "viem": "^2.22.22",
+    "wagmi": "^2.14.10"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
-    "@types/node": "^20",
+    "@types/node": "^22",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
