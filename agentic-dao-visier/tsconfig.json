@@ -22,6 +22,6 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "pages/api/nillion/post_schema.js", "pages/api/nillion/nillion_org_config.js", "scripts/submit_proposal.js"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "pages/api/nillion/post_schema.js", "pages/api/nillion/nillion_org_config.js"],
   "exclude": ["node_modules"]
 }

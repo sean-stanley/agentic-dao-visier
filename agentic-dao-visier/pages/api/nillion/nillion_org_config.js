@@ -1,6 +1,9 @@
 import dotenv from "dotenv";
 dotenv.config();
 
+export const PROPOSAL_SCHEMA_ID = "f4d58805-f58b-4388-b1ce-9793e882de2a";
+export const REVIEW_SCHEMA_ID = "6dbfbb0f-2427-411a-ab90-902effe3f8e2";
+
 export const orgConfig = {
   orgCredentials: {
     secretKey: process.env.NILLION_ORG_SECRET_KEY ?? "",

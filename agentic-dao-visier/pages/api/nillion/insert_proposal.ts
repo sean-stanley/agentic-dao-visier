@@ -6,12 +6,12 @@ const PROPOSAL_SCHEMA_ID = "f4d58805-f58b-4388-b1ce-9793e882de2a";
 
 const [, , proposal] = process.argv;
 
-const makeProposalRecord = (proposal: string) => {
+export const makeProposalRecord = (proposal: string, proposal_id = 1) => {
   const proposalHash = keccak256(proposal);
 
   return [
     {
-      proposal_id: 1,
+      proposal_id,
       contract: process.env.CONTRACT_ADDRESS,
       proposal_hash: proposalHash,
       proposal: { $allot: proposal }, // proposal will be encrypted to a $share
@@ -19,7 +19,7 @@ const makeProposalRecord = (proposal: string) => {
   ];
 };
 
-async function main(proposal: string) {
+export default async function main(proposal: string) {
   try {
     // Create a secret vault wrapper and initialize the SecretVault collection to use
     const proposalCollection = new SecretVaultWrapper(
