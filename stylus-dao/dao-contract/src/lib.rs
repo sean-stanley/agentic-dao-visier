@@ -7,9 +7,19 @@ extern crate alloc;
 use core::panic;
 
 use alloc::{string::String, vec::Vec};
-use alloy_primitives::{Uint, I64, U64, FixedBytes};
+use alloy_primitives::{FixedBytes, Uint, I64, U64};
 /// Import items from the SDK. The prelude contains common traits and macros.
-use stylus_sdk::{alloy_sol_types::sol, evm, alloy_primitives::Address, block, call::RawCall, msg, prelude::*, storage::{StorageAddress, StorageBool, StorageBytes, StorageI64, StorageMap, StorageU64, StorageU8}};
+use stylus_sdk::{
+    alloy_primitives::Address,
+    alloy_sol_types::sol,
+    block,
+    call::RawCall,
+    evm, msg,
+    prelude::*,
+    storage::{
+        StorageAddress, StorageBool, StorageBytes, StorageI64, StorageMap, StorageU64, StorageU8,
+    },
+};
 // use hashbrown::HashMap as Map; // alternate map implementation than StorageMap. Prefer StorageMap for persistent storage.
 use sha3::{Digest, Keccak256};
 
@@ -34,10 +44,9 @@ pub struct DAO {
     staked_balances: StorageMap<Address, StorageU64>,
     vote_records: StorageMap<u64, StorageMap<Address, StorageI64>>,
     locked_stakes: StorageMap<Address, StorageU64>,
-    signers: StorageMap<Address, StorageAddress>,  // Multi-sig signers
-    signer_approvals: StorageMap<u64, StorageMap<Address, StorageBool>>,  // Proposal ID -> (Signer -> Approved)
+    signers: StorageMap<Address, StorageAddress>, // Multi-sig signers
+    signer_approvals: StorageMap<u64, StorageMap<Address, StorageBool>>, // Proposal ID -> (Signer -> Approved)
 }
-
 
 #[storage]
 pub struct Proposal {
@@ -51,7 +60,7 @@ pub struct Proposal {
     pub vote_yes: StorageU64,
     pub vote_no: StorageU64,
     pub executed: StorageBool,
-    pub approvals: StorageU8,  // Number of multi-sig approvals
+    pub approvals: StorageU8, // Number of multi-sig approvals
 }
 
 /// Multi-sig verification: Requires at least 3 signers to approve before execution
@@ -62,7 +71,8 @@ impl DAO {
         let sender = msg::sender();
         let current_balance = self.staked_balances.get(sender);
         if current_balance > Uint::from(0) {
-            self.staked_balances.insert(sender, current_balance + amount);
+            self.staked_balances
+                .insert(sender, current_balance + amount);
         } else {
             self.staked_balances.insert(sender, amount);
         }
@@ -82,7 +92,7 @@ impl DAO {
         action_payload: Vec<u8>,
     ) -> u64 {
         let proposal_id = self.proposal_count.get() + Uint::from(1);
-        
+
         // hash the description for storage
         // might add to costs to execute this but that's just a tradeoff for security
         let description_hash = generate_hash(&description);
@@ -94,7 +104,9 @@ impl DAO {
 
         // this hash is emitted
         let fixed_description_hash = FixedBytes::<32>::from(description_hash);
-        proposal.expiry_timestamp.set(Uint::from(block::timestamp() + 604800)); // Example: 1 week from now
+        proposal
+            .expiry_timestamp
+            .set(Uint::from(block::timestamp() + 604800)); // Example: 1 week from now
         proposal.action_target.set(action_target);
         proposal.action_payload.set_bytes(action_payload);
         proposal.ai_review_hash.set_bytes([0; 1]); // update later to full 32 bytes
@@ -104,7 +116,8 @@ impl DAO {
         proposal.executed.set(false);
         proposal.approvals.set(Uint::from(0));
 
-        self.proposal_count.set(self.proposal_count.get() + Uint::from(1));
+        self.proposal_count
+            .set(self.proposal_count.get() + Uint::from(1));
 
         // emit event
         evm::log(ProposalSubmitted {
@@ -112,8 +125,31 @@ impl DAO {
             proposal_id: proposal_id.to(),
             descriptionHash: fixed_description_hash,
         });
-                
+
         proposal_id.to()
+    }
+
+    /// Returns a proposal tuple with the keys in this order
+    /// proposer
+    /// description_hash
+    /// ai_review_hash
+    /// ai_risk_score
+    /// vote_yes
+    /// vote_no
+    /// expiry_timestamp
+    /// executed
+    pub fn proposals(&self, proposal_id: u64) -> (Address, Vec<u8>, Vec<u8>, u64, u64, u64, u64, bool) {
+        let proposal = self.proposals.get(proposal_id);
+        return (
+            proposal.proposer.get(),
+            proposal.description_hash.get_bytes(),
+            proposal.ai_review_hash.get_bytes(),
+            proposal.ai_risk_score.get().to(),
+            proposal.vote_yes.get().to(),
+            proposal.vote_no.get().to(),
+            proposal.expiry_timestamp.get().to(),
+            proposal.executed.get(),
+        );
     }
 
     /// Quadratic Voting - Each voter can vote only once per proposal
@@ -144,8 +180,12 @@ impl DAO {
         }
 
         // Record the vote
-        let vote_signed = if approve { I64::unchecked_from(vote_power.to::<i64>()) } else { I64::unchecked_from(-vote_power.to::<i64>()) };
-        already_voted.insert(voter, vote_signed);        
+        let vote_signed = if approve {
+            I64::unchecked_from(vote_power.to::<i64>())
+        } else {
+            I64::unchecked_from(-vote_power.to::<i64>())
+        };
+        already_voted.insert(voter, vote_signed);
 
         // Lock the staked tokens for this voter until the voting period ends
         // TODO: fix this with another function that actually transfers the funds to the contract's wallet
@@ -159,16 +199,13 @@ impl DAO {
             power: vote_power.to(),
         });
     }
-    
-    
+
     /// Designate trusted signers for multi-sig execution
     pub fn add_signer(&mut self, signer: Address) {
         self.signers.insert(signer, signer);
 
         // Emit SignerAdded event
-        evm::log(SignerAdded {
-            signer,
-        });
+        evm::log(SignerAdded { signer });
     }
 
     /// Approve a proposal execution (Only signers can call this)
@@ -190,8 +227,10 @@ impl DAO {
 
         approvals.insert(signer, true);
         let current_approval_count = proposal.approvals.get();
-        proposal.approvals.set(current_approval_count + Uint::from(1));
-        
+        proposal
+            .approvals
+            .set(current_approval_count + Uint::from(1));
+
         // Emit ProposalApproved event
         evm::log(ProposalApproved {
             signer,
@@ -231,10 +270,14 @@ impl DAO {
         }
 
         // Execute the function call
-        RawCall::new_delegate()   // configure a delegate call
-            .gas(2100)                       // supply 2100 gas
-            .skip_return_data()             // skip reading return data 
-            .call(proposal.action_target.get(), proposal.action_payload.get_bytes().as_ref()).expect("proposal call failed");
+        RawCall::new_delegate() // configure a delegate call
+            .gas(2100) // supply 2100 gas
+            .skip_return_data() // skip reading return data
+            .call(
+                proposal.action_target.get(),
+                proposal.action_payload.get_bytes().as_ref(),
+            )
+            .expect("proposal call failed");
 
         proposal.executed.set(true);
 
@@ -282,7 +325,6 @@ fn sqrt(n: u64) -> u64 {
     x
 }
 
-
 fn generate_hash(text: &str) -> [u8; 32] {
     let mut hasher = Keccak256::new();
     hasher.update(text);
@@ -324,7 +366,8 @@ mod tests {
     // test submit proposal
     #[motsu::test]
     fn it_submits_proposal(contract: DAO) {
-        let proposal_id = contract.submit_proposal("Test Proposal".to_string(), Address::default(), Vec::new());
+        let proposal_id =
+            contract.submit_proposal("Test Proposal".to_string(), Address::default(), Vec::new());
         let proposal = contract.proposals.get(proposal_id);
         assert_eq!(proposal.proposer.get(), msg::sender());
     }
@@ -333,7 +376,8 @@ mod tests {
     #[motsu::test]
     fn it_votes(contract: DAO) {
         contract.stake_tokens(U64::from(100));
-        let proposal_id = contract.submit_proposal("Test Proposal".to_string(), Address::default(), Vec::new());
+        let proposal_id =
+            contract.submit_proposal("Test Proposal".to_string(), Address::default(), Vec::new());
         contract.vote(proposal_id, true);
         let proposal = contract.proposals.get(proposal_id);
         assert_eq!(proposal.vote_yes.get(), U64::from(10));
