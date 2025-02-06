@@ -8,9 +8,9 @@ use core::panic;
 use std::io::Read;
 
 use alloc::{string::String, vec::Vec};
-use alloy_primitives::{Uint, I64, U64, U256, FixedBytes};
 /// Import items from the SDK. The prelude contains common traits and macros.
-use stylus_sdk::{alloy_sol_types::sol, evm, alloy_primitives::Address, block, call::RawCall, msg, prelude::*, storage::{StorageAddress, StorageBool, StorageBytes, StorageI64, StorageMap, StorageU64, StorageU8}};
+use stylus_sdk::{alloy_sol_types::{sol_data::{Address as SOLAddress, String as SOLString, Bytes as SOLBytes, Uint as SOLUint}, sol, SolType}, evm, alloy_primitives::{Uint, I64, U64, U256, FixedBytes, Address}, block, call::RawCall, msg, prelude::*, storage::{StorageAddress, StorageBool, StorageBytes, StorageI64, StorageMap, StorageU64, StorageU8}};
+
 // use hashbrown::HashMap as Map; // alternate map implementation than StorageMap. Prefer StorageMap for persistent storage.
 use sha3::{Digest, Keccak256};
 
@@ -75,6 +75,25 @@ impl DAO {
             panic!("Not the owner");
         }
     }    
+
+    pub fn mint_tokens(&mut self, to: Address, value: U256) {
+        self.only_owner();
+
+        type TxIdHashType = (SOLAddress, SOLUint<256>, SOLString);
+
+        let tx_hash_data = (to, value, "mintTo".to_string());
+
+        let tx_hash_bytes = TxIdHashType::abi_encode_sequence(&tx_hash_data);
+
+        // call the token contract to mint tokens
+        let _ = RawCall::new().call(*self.governance_token, &tx_hash_bytes);
+
+        // Emit event
+        evm::log(MintingSuccess {
+            to,
+            value: value.to(),
+        });
+    }
 
     // /// Stake governance tokens for voting (Tokens are locked until the voting period ends)
     pub fn stake_tokens(&mut self, amount: U64) {
