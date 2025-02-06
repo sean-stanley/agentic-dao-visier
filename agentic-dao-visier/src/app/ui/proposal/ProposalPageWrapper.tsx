@@ -1,6 +1,5 @@
 'use client';
 
-import { useEffect } from 'react';
 import ProposalDetails from './ProposalDetails';
 import ProposalVoteAndTimeline from './ProposalVotePanel';
 import { VoteData, TimelineData, ExtendedProposal } from '@/app/types';
