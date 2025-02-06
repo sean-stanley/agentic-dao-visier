@@ -1,14 +1,11 @@
-import {
-  useState,
-  useEffect,
-} from "react";
+import { useState, useEffect } from "react";
 import { useContractRead } from "wagmi";
 import { ethers } from "ethers";
 import { ABI } from "./abi";
 
 const CONTRACT_ADDRESS = "0xb8eFb605822C9141E243F9951015bEC43645fa7b";
 
-interface Proposal {
+export interface Proposal {
   id: number;
   proposer: string;
   descriptionHash: string;
