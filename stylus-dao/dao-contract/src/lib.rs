@@ -10,7 +10,7 @@ use std::{io::Read, ops::Add};
 use alloc::{string::String, vec::Vec};
 use alloy_primitives::Function;
 /// Import items from the SDK. The prelude contains common traits and macros.
-use stylus_sdk::{alloy_primitives::{Address, FixedBytes, Uint, I64, U256, U64}, alloy_sol_types::{sol, sol_data::{Address as SOLAddress, Bytes as SOLBytes, String as SOLString, Uint as SOLUint}, SolType}, block, call::RawCall, evm, function_selector, msg, prelude::*, storage::{StorageAddress, StorageBool, StorageBytes, StorageI64, StorageMap, StorageU64, StorageU8}};
+use stylus_sdk::{alloy_primitives::{Address, FixedBytes, Uint, I64, U256, U64}, alloy_sol_types::{sol, sol_data::{Address as SOLAddress, Bytes as SOLBytes, String as SOLString, Uint as SOLUint}, SolType}, block, call::{Call, RawCall}, evm, function_selector, msg, prelude::*, storage::{StorageAddress, StorageBool, StorageBytes, StorageI64, StorageMap, StorageU64, StorageU8}};
 
 // use hashbrown::HashMap as Map; // alternate map implementation than StorageMap. Prefer StorageMap for persistent storage.
 use sha3::{Digest, Keccak256};
@@ -29,6 +29,26 @@ sol! {
     event MintingFailed();
 
     error NotOwner();
+}
+
+sol_interface! {
+    interface IStylusToken {
+        function init() external;
+    
+        function onlyOwner() external view;
+    
+        function receiveEthAndMint(bytes calldata calldata) external payable;
+    
+        function mint(uint256 value) external;
+    
+        function mintTo(address to, uint256 value) external;
+    
+        function burn(uint256 value) external;
+    
+        function setOwner(address new_owner) external;
+    
+        function getOwner() external view returns (address);
+    }
 }
 
 const MINT_SELECTOR: [u8; 4] = function_selector!("receive_eth_and_mint", Address, U256);
@@ -80,39 +100,52 @@ impl DAO {
         }
     }    
 
-    pub fn mint_tokens(&mut self, to: Address, value: U256) {
-        self.only_owner();
-
-        type TxIdHashType = (SOLAddress, SOLUint<256>);
-
-        let tx_hash_data: (Address, Uint<256, 4>) = (to, value);
-
-        let tx_hash_bytes: Vec<u8> = TxIdHashType::abi_encode_sequence(&tx_hash_data);
-
-        let selector: &[u8; 4] = &MINT_SELECTOR;
-
-        // Prepend function selector
-        let mut calldata = Vec::new();
-        calldata.extend_from_slice(selector);
-        calldata.extend_from_slice(&tx_hash_bytes);
-
-        // call the token contract to mint tokens
-        // Call the token contract to mint tokens
-        let result = RawCall::new().call(*self.governance_token, &calldata);
-
-        if result.is_err() {
-            evm::log(MintingFailed {
-
-            });
-            panic!("Minting transaction failed");
-        }
-
-        // Emit event
-        evm::log(MintingSuccess {
-            to,
-            value: value.to(),
-        });
+    pub fn mint_tokens(&mut self, amount: U256) -> Result<(), Vec<u8>> {
+        let token_address = self.governance_token.get();  // Retrieve stored token contract address
+        let token_contract = IStylusToken::from(token_address);  // Create an instance from the address
+    
+        let config = Call::new_in(self)  // Configure the call
+            .gas(evm::gas_left() / 2);   // Use half of the remaining gas
+    
+        token_contract.mint(config, amount)?; // Call mint function
+    
+        Ok(())
     }
+    
+
+    // pub fn mint_tokens(&mut self, to: Address, value: U256) {
+    //     self.only_owner();
+
+    //     type TxIdHashType = (SOLAddress, SOLUint<256>);
+
+    //     let tx_hash_data: (Address, Uint<256, 4>) = (to, value);
+
+    //     let tx_hash_bytes: Vec<u8> = TxIdHashType::abi_encode_sequence(&tx_hash_data);
+
+    //     let selector: &[u8; 4] = &MINT_SELECTOR;
+
+    //     // Prepend function selector
+    //     let mut calldata = Vec::new();
+    //     calldata.extend_from_slice(selector);
+    //     calldata.extend_from_slice(&tx_hash_bytes);
+
+    //     // call the token contract to mint tokens
+    //     // Call the token contract to mint tokens
+    //     let result = RawCall::new().call(*self.governance_token, &calldata);
+
+    //     if result.is_err() {
+    //         evm::log(MintingFailed {
+
+    //         });
+    //         panic!("Minting transaction failed");
+    //     }
+
+    //     // Emit event
+    //     evm::log(MintingSuccess {
+    //         to,
+    //         value: value.to(),
+    //     });
+    // }
 
     // /// Stake governance tokens for voting (Tokens are locked until the voting period ends)
     pub fn stake_tokens(&mut self, amount: U64) {
