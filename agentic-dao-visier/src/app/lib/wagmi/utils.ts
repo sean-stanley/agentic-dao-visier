@@ -36,3 +36,19 @@ export const formatNumber = (num: number): string => {
   }
   return num.toString();
 };
+
+export const formatDate = (timestamp: number) => {
+  return new Date(timestamp * 1000).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+  });
+};
+
+// Calculate percentage of "Yes" votes
+export const calculatePercentage = (votesYes: number, votesNo: number) => {
+  const totalVotes = votesYes + votesNo;
+  return totalVotes === 0
+      ? "0%"
+      : `${((votesYes / totalVotes) * 100).toFixed(1)}%`;
+};
