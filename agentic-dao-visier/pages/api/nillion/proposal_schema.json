@@ -1,0 +1,35 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Propsal and Review: TODO: split into two schemas",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "_id": {
+        "type": "string",
+        "format": "uuid",
+        "coerce": true
+      },
+      "proposal_id": {
+        "type": "integer"
+      },
+      "contract": {
+        "type": "string"
+      },
+      "proposal_hash": {
+        "type": "string",
+        "maxLength": 32
+      },
+      "proposal": {
+        "type": "object",
+        "properties": {
+          "$share": {
+            "type": "string"
+          }
+        },
+        "required": ["$share"]
+      }
+    },
+    "required": ["_id", "proposal_id", "proposal_hash", "contract", "proposal"]
+  }
+}
