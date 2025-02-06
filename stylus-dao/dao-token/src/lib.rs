@@ -29,6 +29,7 @@ sol_storage! {
 sol! {
     event Transfer(address indexed from, address indexed to, uint256 value);
     event Approval(address indexed owner, address indexed spender, uint256 value);
+    event MethodRun();
     
     error InsufficientBalance(address from, uint256 have, uint256 want);
     error InsufficientAllowance(address owner, address spender, uint256 have, uint256 want);
@@ -131,7 +132,7 @@ sol_storage! {
 }
 
 /// Function selector for `mint(address,uint256)`
-const MINT_SELECTOR: [u8; 4] = function_selector!("mint(address,uint256)");
+const MINT_SELECTOR: [u8; 4] = function_selector!("receive_eth_and_mint", Address, U256);
 
 #[public]
 #[inherit(Erc20<StylusTokenParams>)]
@@ -156,9 +157,10 @@ impl StylusToken {
 
     #[payable]
     pub fn receive_eth_and_mint(&mut self, calldata: Bytes) -> Result<(), Vec<u8>> {
-        let selector = &calldata[..4]; // Extract function selector
+        evm::log(MethodRun {});
+        let selector: &[u8] = &calldata[..4]; // Extract function selector
 
-        if selector == MINT_SELECTOR.as_slice() {
+        if selector == &MINT_SELECTOR[..] {
 
             type TxIdHashType = (SOLAddress, SOLUint<256>);
 
@@ -181,6 +183,7 @@ impl StylusToken {
 
     /// Mint tokens (only owner)
     pub fn mint(&mut self, value: U256) -> Result<(), Erc20Error> {
+        evm::log(MethodRun {});
         self.only_owner()?;  // Check if sender is owner
         self.erc20.mint(msg::sender(), value)?;
         Ok(())

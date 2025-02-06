@@ -5,11 +5,12 @@
 extern crate alloc;
 
 use core::panic;
-use std::io::Read;
+use std::{io::Read, ops::Add};
 
 use alloc::{string::String, vec::Vec};
+use alloy_primitives::Function;
 /// Import items from the SDK. The prelude contains common traits and macros.
-use stylus_sdk::{alloy_sol_types::{sol_data::{Address as SOLAddress, String as SOLString, Bytes as SOLBytes, Uint as SOLUint}, sol, SolType}, evm, alloy_primitives::{Uint, I64, U64, U256, FixedBytes, Address}, block, call::RawCall, msg, prelude::*, storage::{StorageAddress, StorageBool, StorageBytes, StorageI64, StorageMap, StorageU64, StorageU8}};
+use stylus_sdk::{alloy_primitives::{Address, FixedBytes, Uint, I64, U256, U64}, alloy_sol_types::{sol, sol_data::{Address as SOLAddress, Bytes as SOLBytes, String as SOLString, Uint as SOLUint}, SolType}, block, call::RawCall, evm, function_selector, msg, prelude::*, storage::{StorageAddress, StorageBool, StorageBytes, StorageI64, StorageMap, StorageU64, StorageU8}};
 
 // use hashbrown::HashMap as Map; // alternate map implementation than StorageMap. Prefer StorageMap for persistent storage.
 use sha3::{Digest, Keccak256};
@@ -25,11 +26,12 @@ sol! {
     event ProposalApproved(address indexed signer, uint64 proposal_id);
     event ProposalExecuted(uint64 proposal_id, address target);
     event MintingSuccess(address indexed to, uint256 value);
+    event MintingFailed();
 
     error NotOwner();
 }
 
-const MINT_SELECTOR: [u8; 4] = [0x40, 0x81, 0x5a, 0x7b];
+const MINT_SELECTOR: [u8; 4] = function_selector!("receive_eth_and_mint", Address, U256);
 
 #[entrypoint]
 #[storage]
@@ -83,11 +85,11 @@ impl DAO {
 
         type TxIdHashType = (SOLAddress, SOLUint<256>);
 
-        let tx_hash_data = (to, value);
+        let tx_hash_data: (Address, Uint<256, 4>) = (to, value);
 
-        let tx_hash_bytes = TxIdHashType::abi_encode_sequence(&tx_hash_data);
+        let tx_hash_bytes: Vec<u8> = TxIdHashType::abi_encode_sequence(&tx_hash_data);
 
-        let selector = &MINT_SELECTOR;
+        let selector: &[u8; 4] = &MINT_SELECTOR;
 
         // Prepend function selector
         let mut calldata = Vec::new();
@@ -95,7 +97,15 @@ impl DAO {
         calldata.extend_from_slice(&tx_hash_bytes);
 
         // call the token contract to mint tokens
-        let _ = RawCall::new().call(*self.governance_token, &calldata);
+        // Call the token contract to mint tokens
+        let result = RawCall::new().call(*self.governance_token, &calldata);
+
+        if result.is_err() {
+            evm::log(MintingFailed {
+
+            });
+            panic!("Minting transaction failed");
+        }
 
         // Emit event
         evm::log(MintingSuccess {
