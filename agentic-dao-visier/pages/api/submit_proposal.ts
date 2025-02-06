@@ -34,11 +34,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       return res.status(405).json({ error: "Method not allowed" });
     }
 
-    const { proposal, target, action } = req.body;
-    if (!proposal) {
+    const { title, descriptiom, target, action } = req.body;
+    if (!descriptiom) {
       return res.status(400).json({ error: "Proposal text is required" });
     }
 
+    const proposal = JSON.stringify({ title, descriptiom });
+    
     // Compute Keccak256 hash of the proposal
     const descriptionHash = keccak256(ethers.toUtf8Bytes(proposal));
 
