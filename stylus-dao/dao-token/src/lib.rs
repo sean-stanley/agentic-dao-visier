@@ -6,8 +6,8 @@ use alloy_primitives::{Address, U256};
 use alloy_sol_types::{sol_data::{Address as SOLAddress, String as SOLString, Bytes as SOLBytes, Uint as SOLUint}, sol, SolType};
 use core::marker::PhantomData;
 use stylus_sdk::{
-    evm, function_selector, msg, prelude::*
-    
+    evm, function_selector, msg, abi::Bytes, prelude::*
+
 };
 
 pub trait Erc20Params {
@@ -131,7 +131,7 @@ sol_storage! {
 }
 
 /// Function selector for `mint(address,uint256)`
-const MINT_SELECTOR: [u8; 4] = function_selector!("mint", Address, U256);
+const MINT_SELECTOR: [u8; 4] = function_selector!("mint(address,uint256)");
 
 #[public]
 #[inherit(Erc20<StylusTokenParams>)]
@@ -158,14 +158,17 @@ impl StylusToken {
     pub fn receive_eth_and_mint(&mut self, calldata: Bytes) -> Result<(), Vec<u8>> {
         let selector = &calldata[..4]; // Extract function selector
 
-        if selector == &MINT_SELECTOR {
+        if selector == MINT_SELECTOR.as_slice() {
 
-            type TxIdHashType = (SOLAddress, SOLUint<256>, SOLString);
+            type TxIdHashType = (SOLAddress, SOLUint<256>);
 
             let tx_hash_data = &calldata[4..]; // Extract the data after the selector
 
             // Decode the TxIdHashType data from the calldata (after the first 4 bytes for the selector)
-            let tx_hash_bytes = TxIdHashType::
+            let (to, amount) = match TxIdHashType::abi_decode_sequence(tx_hash_data, true) {
+                Ok((to, amount)) => (to, amount),
+                Err(_) => return Err(b"Invalid calldata".to_vec()),
+            };
 
             // Call mint function
             self.mint_to(to, amount)?;

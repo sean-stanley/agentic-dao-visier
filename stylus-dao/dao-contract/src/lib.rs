@@ -29,6 +29,8 @@ sol! {
     error NotOwner();
 }
 
+const MINT_SELECTOR: [u8; 4] = [0x40, 0x81, 0x5a, 0x7b];
+
 #[entrypoint]
 #[storage]
 pub struct DAO {
@@ -79,14 +81,21 @@ impl DAO {
     pub fn mint_tokens(&mut self, to: Address, value: U256) {
         self.only_owner();
 
-        type TxIdHashType = (SOLAddress, SOLUint<256>, SOLString);
+        type TxIdHashType = (SOLAddress, SOLUint<256>);
 
-        let tx_hash_data = (to, value, "mintTo".to_string());
+        let tx_hash_data = (to, value);
 
         let tx_hash_bytes = TxIdHashType::abi_encode_sequence(&tx_hash_data);
 
+        let selector = &MINT_SELECTOR;
+
+        // Prepend function selector
+        let mut calldata = Vec::new();
+        calldata.extend_from_slice(selector);
+        calldata.extend_from_slice(&tx_hash_bytes);
+
         // call the token contract to mint tokens
-        let _ = RawCall::new().call(*self.governance_token, &tx_hash_bytes);
+        let _ = RawCall::new().call(*self.governance_token, &calldata);
 
         // Emit event
         evm::log(MintingSuccess {
