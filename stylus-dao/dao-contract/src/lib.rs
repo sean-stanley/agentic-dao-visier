@@ -86,6 +86,9 @@ pub struct Proposal {
 /// Multi-sig verification: Requires at least 3 signers to approve before execution
 #[public]
 impl DAO {
+    pub fn token_address(&self) -> Address {
+        self.governance_token.get()
+    }
 
     /// Initialize the DAO contract with token contract address and owner
     pub fn init(&mut self, token_address: Address) {
@@ -100,7 +103,7 @@ impl DAO {
         }
     }    
 
-    pub fn mint_tokens(&mut self, amount: U256) -> Result<(), Vec<u8>> {
+    pub fn mint_token(&mut self, amount: U256) -> Result<(), Vec<u8>> {
         let token_address = self.governance_token.get();  // Retrieve stored token contract address
         let token_contract = IStylusToken::from(token_address);  // Create an instance from the address
     
@@ -111,7 +114,6 @@ impl DAO {
     
         Ok(())
     }
-    
 
     // pub fn mint_tokens(&mut self, to: Address, value: U256) {
     //     self.only_owner();
