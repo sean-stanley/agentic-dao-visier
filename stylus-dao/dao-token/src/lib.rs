@@ -131,9 +131,6 @@ sol_storage! {
     }
 }
 
-/// Function selector for `mint(address,uint256)`
-const MINT_SELECTOR: [u8; 4] = function_selector!("receive_eth_and_mint", Address, U256);
-
 #[public]
 #[inherit(Erc20<StylusTokenParams>)]
 impl StylusToken {
@@ -155,32 +152,6 @@ impl StylusToken {
         Ok(())
     }
 
-    #[payable]
-    pub fn receive_eth_and_mint(&mut self, calldata: Bytes) -> Result<(), Vec<u8>> {
-        evm::log(MethodRun {});
-        let selector: &[u8] = &calldata[..4]; // Extract function selector
-
-        if selector == &MINT_SELECTOR[..] {
-
-            type TxIdHashType = (SOLAddress, SOLUint<256>);
-
-            let tx_hash_data = &calldata[4..]; // Extract the data after the selector
-
-            // Decode the TxIdHashType data from the calldata (after the first 4 bytes for the selector)
-            let (to, amount) = match TxIdHashType::abi_decode_sequence(tx_hash_data, true) {
-                Ok((to, amount)) => (to, amount),
-                Err(_) => return Err(b"Invalid calldata".to_vec()),
-            };
-
-            // Call mint function
-            self.mint_to(to, amount)?;
-
-            Ok(())
-        } else {
-            Err(b"Invalid function call".to_vec())
-        }
-    }
-
     /// Mint tokens (only owner)
     pub fn mint(&mut self, value: U256) -> Result<(), Erc20Error> {
         evm::log(MethodRun {});
@@ -200,6 +171,11 @@ impl StylusToken {
     pub fn burn(&mut self, value: U256) -> Result<(), Erc20Error> {
         self.erc20.burn(msg::sender(), value)?;
         Ok(())
+    }
+
+    /// Transfer tokens
+    pub fn transfer(&mut self, to: Address, value: U256) -> Result<bool, Erc20Error> {
+        self.erc20.transfer(to, value)
     }
 
     /// Change owner (only owner)

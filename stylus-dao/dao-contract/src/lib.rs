@@ -26,7 +26,8 @@ sol! {
     event ProposalApproved(address indexed signer, uint64 proposal_id);
     event ProposalExecuted(uint64 proposal_id, address target);
     event MintingSuccess(address indexed to, uint256 value);
-    event MintingFailed();
+    event BurningSuccess(address indexed from, uint256 value);
+    event TransferSuccess(address indexed from, address indexed to, uint256 value);
 
     error NotOwner();
 }
@@ -34,24 +35,22 @@ sol! {
 sol_interface! {
     interface IStylusToken {
         function init() external;
-    
+
         function onlyOwner() external view;
-    
-        function receiveEthAndMint(bytes calldata calldata) external payable;
-    
+
         function mint(uint256 value) external;
-    
+
         function mintTo(address to, uint256 value) external;
-    
+
         function burn(uint256 value) external;
-    
+
+        function transfer(address to, uint256 value) external returns (bool);
+
         function setOwner(address new_owner) external;
-    
+
         function getOwner() external view returns (address);
     }
 }
-
-const MINT_SELECTOR: [u8; 4] = function_selector!("receive_eth_and_mint", Address, U256);
 
 #[entrypoint]
 #[storage]
@@ -103,7 +102,8 @@ impl DAO {
         }
     }    
 
-    pub fn mint_token(&mut self, amount: U256) -> Result<(), Vec<u8>> {
+    /// Mint governance tokens through the token contract
+    pub fn mint_tokens(&mut self, amount: U256) -> Result<(), Vec<u8>> {
         let token_address = self.governance_token.get();  // Retrieve stored token contract address
         let token_contract = IStylusToken::from(token_address);  // Create an instance from the address
     
@@ -115,39 +115,60 @@ impl DAO {
         Ok(())
     }
 
-    // pub fn mint_tokens(&mut self, to: Address, value: U256) {
-    //     self.only_owner();
+    /// Mint governance tokens to a specific address through the token contract
+    pub fn mint_to(&mut self, to: Address, amount: U256) -> Result<(), Vec<u8>> {
+        let token_address = self.governance_token.get();  // Retrieve stored token contract address
+        let token_contract = IStylusToken::from(token_address);  // Create an instance from the address
+    
+        let config = Call::new_in(self)  // Configure the call
+            .gas(evm::gas_left() / 2);   // Use half of the remaining gas
+    
+        token_contract.mint_to(config, to, amount)?; // Call mint function
 
-    //     type TxIdHashType = (SOLAddress, SOLUint<256>);
+        evm::log(MintingSuccess {
+            to,
+            value: amount.to(),
+        });
+    
+        Ok(())
+    }
 
-    //     let tx_hash_data: (Address, Uint<256, 4>) = (to, value);
+    /// Burn governance tokens through the token contract
+    pub fn burn_tokens(&mut self, amount: U256) -> Result<(), Vec<u8>> {
+        let token_address = self.governance_token.get();  // Retrieve stored token contract address
+        let token_contract = IStylusToken::from(token_address);  // Create an instance from the address
+    
+        let config = Call::new_in(self)  // Configure the call
+            .gas(evm::gas_left() / 2);   // Use half of the remaining gas
+    
+        token_contract.burn(config, amount)?; // Call burn function
 
-    //     let tx_hash_bytes: Vec<u8> = TxIdHashType::abi_encode_sequence(&tx_hash_data);
+        evm::log(BurningSuccess {
+            from: msg::sender(),
+            value: amount.to(),
+        });
+    
+        Ok(())
+    }
 
-    //     let selector: &[u8; 4] = &MINT_SELECTOR;
+    /// Transfer governance tokens through the token contract
+    pub fn transfer_tokens(&mut self, to: Address, amount: U256) -> Result<bool, Vec<u8>> {
+        let token_address = self.governance_token.get();  // Retrieve stored token contract address
+        let token_contract = IStylusToken::from(token_address);  // Create an instance from the address
+    
+        let config = Call::new_in(self)  // Configure the call
+            .gas(evm::gas_left() / 2);   // Use half of the remaining gas
+    
+        let success = token_contract.transfer(config, to, amount)?; // Call transfer function
 
-    //     // Prepend function selector
-    //     let mut calldata = Vec::new();
-    //     calldata.extend_from_slice(selector);
-    //     calldata.extend_from_slice(&tx_hash_bytes);
-
-    //     // call the token contract to mint tokens
-    //     // Call the token contract to mint tokens
-    //     let result = RawCall::new().call(*self.governance_token, &calldata);
-
-    //     if result.is_err() {
-    //         evm::log(MintingFailed {
-
-    //         });
-    //         panic!("Minting transaction failed");
-    //     }
-
-    //     // Emit event
-    //     evm::log(MintingSuccess {
-    //         to,
-    //         value: value.to(),
-    //     });
-    // }
+        evm::log(TransferSuccess {
+            from: msg::sender(),
+            to,
+            value: amount.to(),
+        });
+    
+        Ok(success)
+    }
 
     // /// Stake governance tokens for voting (Tokens are locked until the voting period ends)
     pub fn stake_tokens(&mut self, amount: U64) {
