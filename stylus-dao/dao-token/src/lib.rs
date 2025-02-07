@@ -3,10 +3,10 @@ extern crate alloc;
 
 use alloc::string::String;
 use alloy_primitives::{Address, U256};
-use alloy_sol_types::{sol_data::{Address as SOLAddress, Uint as SOLUint}, sol, SolType};
+use alloy_sol_types::sol;
 use core::marker::PhantomData;
 use stylus_sdk::{
-    evm, function_selector, msg, abi::Bytes, prelude::*
+    evm, msg, prelude::*
 
 };
 

@@ -5,12 +5,10 @@
 extern crate alloc;
 
 use core::panic;
-use std::{io::Read, ops::Add};
 
 use alloc::{string::String, vec::Vec};
-use alloy_primitives::Function;
 /// Import items from the SDK. The prelude contains common traits and macros.
-use stylus_sdk::{alloy_primitives::{Address, FixedBytes, Uint, I64, U256, U64}, alloy_sol_types::{sol, sol_data::{Address as SOLAddress, Bytes as SOLBytes, String as SOLString, Uint as SOLUint}, SolType}, block, call::{Call, RawCall}, evm, function_selector, msg, prelude::*, storage::{StorageAddress, StorageBool, StorageBytes, StorageI64, StorageMap, StorageU64, StorageU8}};
+use stylus_sdk::{alloy_primitives::{Address, FixedBytes, Uint, I64, U256, U64}, alloy_sol_types::sol, block, call::{Call, RawCall}, evm, msg, prelude::*, storage::{StorageAddress, StorageBool, StorageBytes, StorageI64, StorageMap, StorageU64, StorageU8}};
 
 // use hashbrown::HashMap as Map; // alternate map implementation than StorageMap. Prefer StorageMap for persistent storage.
 use sha3::{Digest, Keccak256};
