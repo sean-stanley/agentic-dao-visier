@@ -7,6 +7,7 @@ extern crate alloc;
 use core::panic;
 
 use alloc::{string::String, vec::Vec};
+use alloy_primitives::U8;
 /// Import items from the SDK. The prelude contains common traits and macros.
 use stylus_sdk::{alloy_primitives::{Address, FixedBytes, Uint, I64, U256, U64}, alloy_sol_types::sol, block, call::{Call, RawCall}, evm, msg, prelude::*, storage::{StorageAddress, StorageBool, StorageBytes, StorageI64, StorageMap, StorageU64, StorageU8}};
 
@@ -18,7 +19,7 @@ const MULTI_SIG_THRESHOLD: u8 = 3;
 // defining events and errors
 sol! {
     event TokensStaked(address indexed sender, uint256 amount);
-    event ProposalSubmitted(address indexed proposer, uint64 proposal_id, bytes32 descriptionHash, address action_target, bytes32 action_payload, uint64 expiryTimestamp, string description);
+    event ProposalSubmitted(address indexed proposer, uint64 proposal_id, bytes32 descriptionHash, uint64 expiryTimestamp, string description, uint64 vote_yes, uint64 vote_no , uint8 ai_risk_score);
     event VoteCast(address indexed voter, uint64 proposal_id, bool approve, uint256 power);
     event SignerAdded(address indexed signer);
     event ProposalApproved(address indexed signer, uint64 proposal_id);
@@ -138,8 +139,9 @@ impl DAO {
     pub fn submit_proposal(
         &mut self,
         description: String,
-        action_target: Address,
-        action_payload: FixedBytes<32>,
+        yes_votes: U64, 
+        no_votes: U64, 
+        ai_risk_score: U8,
     ) -> u64 {
         let proposal_id = self.proposal_count.get() + Uint::from(1);
         
@@ -156,15 +158,11 @@ impl DAO {
         let fixed_description_hash = FixedBytes::<32>::from(description_hash);
 
         proposal.expiry_timestamp.set(Uint::from(block::timestamp() + 604800)); // Example: 1 week from now
-        proposal.action_target.set(action_target);
-
-        // this payload is stored
-        proposal.action_payload.set_bytes(action_payload);
 
         proposal.ai_review_hash.set_bytes([0; 1]); // update later to full 32 bytes
         proposal.ai_risk_score.set(Uint::from(0)); // update later
-        proposal.vote_yes.set(Uint::from(0));
-        proposal.vote_no.set(Uint::from(0));
+        proposal.vote_yes.set(yes_votes);
+        proposal.vote_no.set(no_votes);
         proposal.executed.set(false);
         proposal.approvals.set(Uint::from(0));
 
@@ -176,9 +174,10 @@ impl DAO {
             proposer: msg::sender(),
             descriptionHash: fixed_description_hash,
             expiryTimestamp: proposal.expiry_timestamp.get().to(),
+            vote_yes: proposal.vote_yes.get().to(),
+            vote_no: proposal.vote_no.get().to(),
+            ai_risk_score: ai_risk_score.to(),
             description: description,
-            action_target: action_target,
-            action_payload: action_payload,
         });
                 
         proposal_id.to()
@@ -276,44 +275,44 @@ impl DAO {
     //     }
     // }
 
-    /// Execute a proposal if it meets all conditions
-    pub fn execute_proposal(&mut self, proposal_id: u64) {
-        let mut proposal = self.proposals.setter(proposal_id);
+    // /// Execute a proposal if it meets all conditions
+    // pub fn execute_proposal(&mut self, proposal_id: u64) {
+    //     let mut proposal = self.proposals.setter(proposal_id);
 
-        // Ensure the proposal is still valid
-        if block::timestamp() > proposal.expiry_timestamp.get().to() {
-            panic!("Proposal has expired.");
-        }
+    //     // Ensure the proposal is still valid
+    //     if block::timestamp() > proposal.expiry_timestamp.get().to() {
+    //         panic!("Proposal has expired.");
+    //     }
 
-        // Ensure AI review didn't flag it as too risky
-        if proposal.ai_risk_score.get().to::<u8>() > 75 {
-            panic!("Proposal flagged as too risky.");
-        }
+    //     // Ensure AI review didn't flag it as too risky
+    //     if proposal.ai_risk_score.get().to::<u8>() > 75 {
+    //         panic!("Proposal flagged as too risky.");
+    //     }
 
-        // Ensure it passed voting
-        if proposal.vote_yes.get() <= proposal.vote_no.get() {
-            panic!("Proposal did not pass.");
-        }
+    //     // Ensure it passed voting
+    //     if proposal.vote_yes.get() <= proposal.vote_no.get() {
+    //         panic!("Proposal did not pass.");
+    //     }
 
-        // Ensure multi-sig approval threshold is met
-        if proposal.approvals.get().to::<u8>() < 3 {
-            panic!("Proposal needs at least 3 multi-sig approvals.");
-        }
+    //     // Ensure multi-sig approval threshold is met
+    //     if proposal.approvals.get().to::<u8>() < 3 {
+    //         panic!("Proposal needs at least 3 multi-sig approvals.");
+    //     }
 
-        // Execute the function call
-        RawCall::new_delegate()   // configure a delegate call
-            .gas(2100)                       // supply 2100 gas
-            .skip_return_data()             // skip reading return data 
-            .call(proposal.action_target.get(), proposal.action_payload.get_bytes().as_ref()).expect("proposal call failed");
+    //     // Execute the function call
+    //     RawCall::new_delegate()   // configure a delegate call
+    //         .gas(2100)                       // supply 2100 gas
+    //         .skip_return_data()             // skip reading return data 
+    //         .call(proposal.action_target.get(), proposal.action_payload.get_bytes().as_ref()).expect("proposal call failed");
 
-        proposal.executed.set(true);
+    //     proposal.executed.set(true);
 
-        // Emit ProposalExecuted event
-        evm::log(ProposalExecuted {
-            proposal_id,
-            target: proposal.action_target.get(),
-        });
-    }
+    //     // Emit ProposalExecuted event
+    //     evm::log(ProposalExecuted {
+    //         proposal_id,
+    //         target: proposal.action_target.get(),
+    //     });
+    // }
 
     /// Update a proposal with an AI review hash (Only once)
     pub fn update_proposal_with_ai_review(&mut self, proposal_id: u64, ai_review_hash: [u8; 32], score: u8) {
@@ -407,7 +406,7 @@ mod tests {
     // test submit proposal
     #[motsu::test]
     fn it_submits_proposal(contract: DAO) {
-        let proposal_id = contract.submit_proposal("Test Proposal".to_string(), Address::default(), FixedBytes::<32>::new([0; 32]));
+        let proposal_id = contract.submit_proposal("Test Proposal".to_string(), U64::from(0), U64::from(0), U8::from(0));
         let proposal = contract.proposals.get(proposal_id);
         assert_eq!(proposal.proposer.get(), msg::sender());
     }
@@ -416,7 +415,7 @@ mod tests {
     #[motsu::test]
     fn it_votes(contract: DAO) {
         contract.stake_tokens(U64::from(100));
-        let proposal_id = contract.submit_proposal("Test Proposal".to_string(), Address::default(), FixedBytes::<32>::new([0; 32]));
+        let proposal_id = contract.submit_proposal("Test Proposal".to_string(), U64::from(0), U64::from(0), U8::from(0));
         contract.vote(proposal_id, true);
         let proposal = contract.proposals.get(proposal_id);
         assert_eq!(proposal.vote_yes.get(), U64::from(10));

@@ -40,10 +40,11 @@ export function handleProposalSubmitted(event: ProposalSubmittedEvent): void {
   entity.proposer = event.params.proposer
   entity.proposal_id = event.params.proposal_id
   entity.descriptionHash = event.params.descriptionHash
-  entity.action_target = event.params.action_target
-  entity.action_payload = event.params.action_payload
   entity.expiryTimestamp = event.params.expiryTimestamp
   entity.description = event.params.description
+  entity.vote_yes = event.params.vote_yes
+  entity.vote_no = event.params.vote_no
+  entity.ai_risk_score = event.params.ai_risk_score
 
   entity.blockNumber = event.block.number
   entity.blockTimestamp = event.block.timestamp

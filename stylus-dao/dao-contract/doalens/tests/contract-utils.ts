@@ -33,10 +33,11 @@ export function createProposalSubmittedEvent(
   proposer: Address,
   proposal_id: BigInt,
   descriptionHash: Bytes,
-  action_target: Address,
-  action_payload: Bytes,
   expiryTimestamp: BigInt,
-  description: string
+  description: string,
+  vote_yes: BigInt,
+  vote_no: BigInt,
+  ai_risk_score: i32
 ): ProposalSubmitted {
   let proposalSubmittedEvent = changetype<ProposalSubmitted>(newMockEvent())
 
@@ -59,18 +60,6 @@ export function createProposalSubmittedEvent(
   )
   proposalSubmittedEvent.parameters.push(
     new ethereum.EventParam(
-      "action_target",
-      ethereum.Value.fromAddress(action_target)
-    )
-  )
-  proposalSubmittedEvent.parameters.push(
-    new ethereum.EventParam(
-      "action_payload",
-      ethereum.Value.fromFixedBytes(action_payload)
-    )
-  )
-  proposalSubmittedEvent.parameters.push(
-    new ethereum.EventParam(
       "expiryTimestamp",
       ethereum.Value.fromUnsignedBigInt(expiryTimestamp)
     )
@@ -79,6 +68,24 @@ export function createProposalSubmittedEvent(
     new ethereum.EventParam(
       "description",
       ethereum.Value.fromString(description)
+    )
+  )
+  proposalSubmittedEvent.parameters.push(
+    new ethereum.EventParam(
+      "vote_yes",
+      ethereum.Value.fromUnsignedBigInt(vote_yes)
+    )
+  )
+  proposalSubmittedEvent.parameters.push(
+    new ethereum.EventParam(
+      "vote_no",
+      ethereum.Value.fromUnsignedBigInt(vote_no)
+    )
+  )
+  proposalSubmittedEvent.parameters.push(
+    new ethereum.EventParam(
+      "ai_risk_score",
+      ethereum.Value.fromUnsignedBigInt(BigInt.fromI32(ai_risk_score))
     )
   )
 

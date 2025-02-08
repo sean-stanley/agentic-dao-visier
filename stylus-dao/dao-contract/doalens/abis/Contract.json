@@ -1,6 +1,22 @@
 [
   {
-    "constant": false,
+    "constant": true,
+    "inputs": [],
+    "name": "token_address",
+    "outputs": [{ "name": "", "type": "address" }],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [{ "name": "token_address", "type": "address" }],
+    "name": "init",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
     "inputs": [
       { "name": "to", "type": "address" },
       { "name": "amount", "type": "uint256" }
@@ -12,11 +28,19 @@
     "type": "function"
   },
   {
-    "constant": false,
+    "inputs": [{ "name": "amount", "type": "uint64" }],
+    "name": "stake_tokens",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
     "inputs": [
       { "name": "description", "type": "string" },
-      { "name": "action_target", "type": "address" },
-      { "name": "action_payload", "type": "bytes32" }
+      { "name": "yes_votes", "type": "uint64" },
+      { "name": "no_votes", "type": "uint64" },
+      { "name": "ai_risk_score", "type": "uint8" }
     ],
     "name": "submit_proposal",
     "outputs": [{ "name": "", "type": "uint64" }],
@@ -25,7 +49,6 @@
     "type": "function"
   },
   {
-    "constant": false,
     "inputs": [
       { "name": "proposal_id", "type": "uint64" },
       { "name": "approve", "type": "bool" }
@@ -37,7 +60,6 @@
     "type": "function"
   },
   {
-    "constant": false,
     "inputs": [{ "name": "signer", "type": "address" }],
     "name": "add_signer",
     "outputs": [],
@@ -46,16 +68,6 @@
     "type": "function"
   },
   {
-    "constant": false,
-    "inputs": [{ "name": "proposal_id", "type": "uint64" }],
-    "name": "execute_proposal",
-    "outputs": [],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "constant": false,
     "inputs": [
       { "name": "proposal_id", "type": "uint64" },
       { "name": "ai_review_hash", "type": "bytes32" },
@@ -65,33 +77,6 @@
     "outputs": [],
     "payable": false,
     "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [],
-    "name": "token_address",
-    "outputs": [{ "name": "", "type": "address" }],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": false,
-    "inputs": [{ "name": "token_address", "type": "address" }],
-    "name": "init",
-    "outputs": [],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [],
-    "name": "owner",
-    "outputs": [{ "name": "", "type": "address" }],
-    "payable": false,
-    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -107,12 +92,13 @@
     "anonymous": true,
     "inputs": [
       { "indexed": true, "name": "proposer", "type": "address" },
-      { "indexed": true, "name": "proposal_id", "type": "uint64" },
-      { "indexed": true, "name": "descriptionHash", "type": "bytes32" },
-      { "name": "action_target", "type": "address" },
-      { "name": "action_payload", "type": "bytes32" },
-      { "name": "expiryTimestamp", "type": "uint64" },
-      { "name": "description", "type": "string" }
+      { "indexed": false, "name": "proposal_id", "type": "uint64" },
+      { "indexed": false, "name": "descriptionHash", "type": "bytes32" },
+      { "indexed": false, "name": "expiryTimestamp", "type": "uint64" },
+      { "indexed": false, "name": "description", "type": "string" },
+      { "indexed": false, "name": "vote_yes", "type": "uint64" },
+      { "indexed": false, "name": "vote_no", "type": "uint64" },
+      { "indexed": false, "name": "ai_risk_score", "type": "uint8" }
     ],
     "name": "ProposalSubmitted",
     "type": "event"
@@ -121,9 +107,9 @@
     "anonymous": true,
     "inputs": [
       { "indexed": true, "name": "voter", "type": "address" },
-      { "indexed": true, "name": "proposal_id", "type": "uint64" },
-      { "name": "approve", "type": "bool" },
-      { "name": "power", "type": "uint256" }
+      { "indexed": false, "name": "proposal_id", "type": "uint64" },
+      { "indexed": false, "name": "approve", "type": "bool" },
+      { "indexed": false, "name": "power", "type": "uint256" }
     ],
     "name": "VoteCast",
     "type": "event"
@@ -165,10 +151,18 @@
     "anonymous": true,
     "inputs": [
       { "indexed": true, "name": "proposal_id", "type": "uint64" },
-      { "name": "ai_review_hash", "type": "bytes32" },
-      { "name": "score", "type": "uint8" }
+      { "indexed": false, "name": "ai_review_hash", "type": "bytes32" },
+      { "indexed": false, "name": "score", "type": "uint8" }
     ],
     "name": "ProposalAIUpdated",
     "type": "event"
+  },
+  {
+    "inputs": [],
+    "name": "NotOwner",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "revert",
+    "type": "error"
   }
 ]

@@ -12,10 +12,11 @@ type ProposalSubmitted @entity(immutable: true) {
   proposer: Bytes! # address
   proposal_id: BigInt! # uint64
   descriptionHash: Bytes! # bytes32
-  action_target: Bytes! # address
-  action_payload: Bytes! # bytes32
   expiryTimestamp: BigInt! # uint64
   description: String! # string
+  vote_yes: BigInt! # uint64
+  vote_no: BigInt! # uint64
+  ai_risk_score: Int! # uint8
   blockNumber: BigInt!
   blockTimestamp: BigInt!
   transactionHash: Bytes!
