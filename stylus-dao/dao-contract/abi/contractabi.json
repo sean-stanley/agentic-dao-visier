@@ -1,32 +1,31 @@
 [
   {
-    "constant": true,
-    "inputs": [],
+    "type": "function",
     "name": "token_address",
+    "inputs": [],
     "outputs": [
       {
         "name": "",
         "type": "address"
       }
     ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
+    "stateMutability": "view"
   },
   {
+    "type": "function",
+    "name": "init",
     "inputs": [
       {
         "name": "token_address",
         "type": "address"
       }
     ],
-    "name": "init",
     "outputs": [],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
+    "stateMutability": "nonpayable"
   },
   {
+    "type": "function",
+    "name": "mint_to",
     "inputs": [
       {
         "name": "to",
@@ -37,26 +36,24 @@
         "type": "uint256"
       }
     ],
-    "name": "mint_to",
     "outputs": [],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
+    "stateMutability": "nonpayable"
   },
   {
+    "type": "function",
+    "name": "stake_tokens",
     "inputs": [
       {
         "name": "amount",
         "type": "uint64"
       }
     ],
-    "name": "stake_tokens",
     "outputs": [],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
+    "stateMutability": "nonpayable"
   },
   {
+    "type": "function",
+    "name": "submit_proposal",
     "inputs": [
       {
         "name": "description",
@@ -75,18 +72,17 @@
         "type": "uint8"
       }
     ],
-    "name": "submit_proposal",
     "outputs": [
       {
         "name": "",
         "type": "uint64"
       }
     ],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
+    "stateMutability": "nonpayable"
   },
   {
+    "type": "function",
+    "name": "vote",
     "inputs": [
       {
         "name": "proposal_id",
@@ -97,26 +93,24 @@
         "type": "bool"
       }
     ],
-    "name": "vote",
     "outputs": [],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
+    "stateMutability": "nonpayable"
   },
   {
+    "type": "function",
+    "name": "add_signer",
     "inputs": [
       {
         "name": "signer",
         "type": "address"
       }
     ],
-    "name": "add_signer",
     "outputs": [],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
+    "stateMutability": "nonpayable"
   },
   {
+    "type": "function",
+    "name": "update_proposal_with_ai_review",
     "inputs": [
       {
         "name": "proposal_id",
@@ -131,192 +125,221 @@
         "type": "uint8"
       }
     ],
-    "name": "update_proposal_with_ai_review",
     "outputs": [],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
+    "stateMutability": "nonpayable"
   },
   {
-    "anonymous": true,
+    "type": "function",
+    "name": "verify_ai_review",
     "inputs": [
       {
-        "indexed": true,
-        "name": "sender",
+        "name": "proposal_id",
+        "type": "uint64"
+      },
+      {
+        "name": "provided_hash",
+        "type": "bytes32"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "set_governance_token",
+    "inputs": [
+      {
+        "name": "token_address",
         "type": "address"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "event",
+    "name": "TokensStaked",
+    "inputs": [
+      {
+        "name": "sender",
+        "type": "address",
+        "indexed": true
       },
       {
         "name": "amount",
-        "type": "uint256"
+        "type": "uint256",
+        "indexed": false
       }
     ],
-    "name": "TokensStaked",
-    "type": "event"
+    "anonymous": false
   },
   {
-    "anonymous": true,
-    "inputs": [
-      {
-        "indexed": true,
-        "name": "proposer",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "name": "proposal_id",
-        "type": "uint64"
-      },
-      {
-        "indexed": false,
-        "name": "descriptionHash",
-        "type": "bytes32"
-      },
-      {
-        "indexed": false,
-        "name": "expiryTimestamp",
-        "type": "uint64"
-      },
-      {
-        "indexed": false,
-        "name": "description",
-        "type": "string"
-      },
-      {
-        "indexed": false,
-        "name": "vote_yes",
-        "type": "uint64"
-      },
-      {
-        "indexed": false,
-        "name": "vote_no",
-        "type": "uint64"
-      },
-      {
-        "indexed": false,
-        "name": "ai_risk_score",
-        "type": "uint8"
-      }
-    ],
+    "type": "event",
     "name": "ProposalSubmitted",
-    "type": "event"
-  },
-  {
-    "anonymous": true,
     "inputs": [
       {
-        "indexed": true,
-        "name": "voter",
-        "type": "address"
+        "name": "proposer",
+        "type": "address",
+        "indexed": true
       },
       {
-        "indexed": false,
         "name": "proposal_id",
-        "type": "uint64"
+        "type": "uint64",
+        "indexed": false
       },
       {
-        "indexed": false,
-        "name": "approve",
-        "type": "bool"
+        "name": "descriptionHash",
+        "type": "bytes32",
+        "indexed": false
       },
       {
-        "indexed": false,
-        "name": "power",
-        "type": "uint256"
+        "name": "expiryTimestamp",
+        "type": "uint64",
+        "indexed": false
+      },
+      {
+        "name": "description",
+        "type": "string",
+        "indexed": false
+      },
+      {
+        "name": "vote_yes",
+        "type": "uint64",
+        "indexed": false
+      },
+      {
+        "name": "vote_no",
+        "type": "uint64",
+        "indexed": false
+      },
+      {
+        "name": "ai_risk_score",
+        "type": "uint8",
+        "indexed": false
       }
     ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
     "name": "VoteCast",
-    "type": "event"
-  },
-  {
-    "anonymous": true,
     "inputs": [
       {
-        "indexed": true,
-        "name": "signer",
-        "type": "address"
+        "name": "voter",
+        "type": "address",
+        "indexed": true
+      },
+      {
+        "name": "proposal_id",
+        "type": "uint64",
+        "indexed": false
+      },
+      {
+        "name": "approve",
+        "type": "bool",
+        "indexed": false
+      },
+      {
+        "name": "power",
+        "type": "uint256",
+        "indexed": false
       }
     ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
     "name": "SignerAdded",
-    "type": "event"
-  },
-  {
-    "anonymous": true,
     "inputs": [
       {
-        "indexed": true,
         "name": "signer",
-        "type": "address"
-      },
-      {
-        "indexed": true,
-        "name": "proposal_id",
-        "type": "uint64"
+        "type": "address",
+        "indexed": true
       }
     ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
     "name": "ProposalApproved",
-    "type": "event"
-  },
-  {
-    "anonymous": true,
     "inputs": [
       {
-        "indexed": true,
-        "name": "proposal_id",
-        "type": "uint64"
+        "name": "signer",
+        "type": "address",
+        "indexed": true
       },
       {
-        "indexed": true,
-        "name": "target",
-        "type": "address"
+        "name": "proposal_id",
+        "type": "uint64",
+        "indexed": false
       }
     ],
-    "name": "ProposalExecuted",
-    "type": "event"
+    "anonymous": false
   },
   {
-    "anonymous": true,
+    "type": "event",
+    "name": "ProposalExecuted",
     "inputs": [
       {
-        "indexed": true,
+        "name": "proposal_id",
+        "type": "uint64",
+        "indexed": false
+      },
+      {
+        "name": "target",
+        "type": "address",
+        "indexed": false
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "MintingSuccess",
+    "inputs": [
+      {
         "name": "to",
-        "type": "address"
+        "type": "address",
+        "indexed": true
       },
       {
         "name": "value",
-        "type": "uint256"
+        "type": "uint256",
+        "indexed": false
       }
     ],
-    "name": "MintingSuccess",
-    "type": "event"
+    "anonymous": false
   },
   {
-    "anonymous": true,
+    "type": "event",
+    "name": "ProposalAIUpdated",
     "inputs": [
       {
-        "indexed": true,
         "name": "proposal_id",
-        "type": "uint64"
+        "type": "uint64",
+        "indexed": false
       },
       {
-        "indexed": false,
         "name": "ai_review_hash",
-        "type": "bytes32"
+        "type": "bytes32",
+        "indexed": false
       },
       {
-        "indexed": false,
         "name": "score",
-        "type": "uint8"
+        "type": "uint8",
+        "indexed": false
       }
     ],
-    "name": "ProposalAIUpdated",
-    "type": "event"
+    "anonymous": false
   },
   {
-    "inputs": [],
+    "type": "error",
     "name": "NotOwner",
-    "outputs": [],
-    "payable": false,
-    "stateMutability": "revert",
-    "type": "error"
+    "inputs": []
   }
 ]

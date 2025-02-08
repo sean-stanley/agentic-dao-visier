@@ -8,9 +8,9 @@ dataSources:
     name: Contract
     network: arbitrum-sepolia
     source:
-      address: "0xb06be7e96de3bbbb04855894f9035dfee8d4b9da"
+      address: "0x56b93a4658de31f391188a33edff3ca8102f38e0"
       abi: Contract
-      startBlock: 122213390
+      startBlock: 122214888
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -36,12 +36,12 @@ dataSources:
           handler: handleVoteCast
         - event: SignerAdded(indexed address)
           handler: handleSignerAdded
-        - event: ProposalApproved(indexed address,indexed uint64)
+        - event: ProposalApproved(indexed address,uint64)
           handler: handleProposalApproved
-        - event: ProposalExecuted(indexed uint64,indexed address)
+        - event: ProposalExecuted(uint64,address)
           handler: handleProposalExecuted
         - event: MintingSuccess(indexed address,uint256)
           handler: handleMintingSuccess
-        - event: ProposalAIUpdated(indexed uint64,bytes32,uint8)
+        - event: ProposalAIUpdated(uint64,bytes32,uint8)
           handler: handleProposalAIUpdated
       file: ./src/contract.ts
