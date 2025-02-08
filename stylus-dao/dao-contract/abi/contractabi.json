@@ -1,203 +1,343 @@
 [
-    {
-      "type": "function",
-      "name": "stake_tokens",
-      "inputs": [
-        {
-          "name": "amount",
-          "type": "uint64"
-        }
-      ],
-      "outputs": [],
-      "stateMutability": "nonpayable"
-    },
-    {
-      "type": "function",
-      "name": "submit_proposal",
-      "inputs": [
-        {
-          "name": "description",
-          "type": "string"
-        },
-        {
-          "name": "action_target",
-          "type": "address"
-        },
-        {
-          "name": "action_payload",
-          "type": "bytes"
-        }
-      ],
-      "outputs": [
-        {
-          "name": "",
-          "type": "uint64"
-        }
-      ],
-      "stateMutability": "nonpayable"
-    },
-    {
-      "type": "function",
-      "name": "vote",
-      "inputs": [
-        {
-          "name": "proposal_id",
-          "type": "uint64"
-        },
-        {
-          "name": "approve",
-          "type": "bool"
-        }
-      ],
-      "outputs": [],
-      "stateMutability": "nonpayable"
-    },
-    {
-      "type": "function",
-      "name": "add_signer",
-      "inputs": [
-        {
-          "name": "signer",
-          "type": "address"
-        }
-      ],
-      "outputs": [],
-      "stateMutability": "nonpayable"
-    },
-    {
-      "type": "function",
-      "name": "approve_execution",
-      "inputs": [
-        {
-          "name": "proposal_id",
-          "type": "uint64"
-        }
-      ],
-      "outputs": [],
-      "stateMutability": "nonpayable"
-    },
-    {
-      "type": "function",
-      "name": "execute_proposal",
-      "inputs": [
-        {
-          "name": "proposal_id",
-          "type": "uint64"
-        }
-      ],
-      "outputs": [],
-      "stateMutability": "nonpayable"
-    },
-    {
-      "type": "event",
-      "name": "TokensStaked",
-      "inputs": [
-        {
-          "name": "sender",
-          "type": "address",
-          "indexed": true
-        },
-        {
-          "name": "amount",
-          "type": "uint256",
-          "indexed": false
-        }
-      ],
-      "anonymous": false
-    },
-    {
-      "type": "event",
-      "name": "ProposalSubmitted",
-      "inputs": [
-        {
-          "name": "proposer",
-          "type": "address",
-          "indexed": true
-        },
-        {
-          "name": "proposal_id",
-          "type": "uint64",
-          "indexed": true
-        },
-        {
-          "name": "fixed_description_hash",
-          "type": "bytes32",
-          "indexed": false
-        }
-      ],
-      "anonymous": false
-    },
-    {
-      "type": "event",
-      "name": "VoteCast",
-      "inputs": [
-        {
-          "name": "voter",
-          "type": "address",
-          "indexed": true
-        },
-        {
-          "name": "proposal_id",
-          "type": "uint64",
-          "indexed": true
-        },
-        {
-          "name": "approve",
-          "type": "bool",
-          "indexed": false
-        },
-        {
-          "name": "power",
-          "type": "uint256",
-          "indexed": false
-        }
-      ],
-      "anonymous": false
-    },
-    {
-      "type": "event",
-      "name": "SignerAdded",
-      "inputs": [
-        {
-          "name": "signer",
-          "type": "address",
-          "indexed": true
-        }
-      ],
-      "anonymous": false
-    },
-    {
-      "type": "event",
-      "name": "ProposalApproved",
-      "inputs": [
-        {
-          "name": "signer",
-          "type": "address",
-          "indexed": true
-        },
-        {
-          "name": "proposal_id",
-          "type": "uint64",
-          "indexed": true
-        }
-      ],
-      "anonymous": false
-    },
-    {
-      "type": "event",
-      "name": "ProposalExecuted",
-      "inputs": [
-        {
-          "name": "proposal_id",
-          "type": "uint64",
-          "indexed": true
-        },
-        {
-          "name": "target",
-          "type": "address",
-          "indexed": false
-        }
-      ],
-      "anonymous": false
-    }
-  ]
+  {
+    "type": "function",
+    "name": "token_address",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "init",
+    "inputs": [
+      {
+        "name": "token_address",
+        "type": "address"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "mint_to",
+    "inputs": [
+      {
+        "name": "to",
+        "type": "address"
+      },
+      {
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "stake_tokens",
+    "inputs": [
+      {
+        "name": "amount",
+        "type": "uint64"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "submit_proposal",
+    "inputs": [
+      {
+        "name": "description",
+        "type": "string"
+      },
+      {
+        "name": "action_target",
+        "type": "address"
+      },
+      {
+        "name": "action_payload",
+        "type": "bytes32"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint64"
+      }
+    ],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "vote",
+    "inputs": [
+      {
+        "name": "proposal_id",
+        "type": "uint64"
+      },
+      {
+        "name": "approve",
+        "type": "bool"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "add_signer",
+    "inputs": [
+      {
+        "name": "signer",
+        "type": "address"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "execute_proposal",
+    "inputs": [
+      {
+        "name": "proposal_id",
+        "type": "uint64"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "update_proposal_with_ai_review",
+    "inputs": [
+      {
+        "name": "proposal_id",
+        "type": "uint64"
+      },
+      {
+        "name": "ai_review_hash",
+        "type": "bytes32"
+      },
+      {
+        "name": "score",
+        "type": "uint8"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "verify_ai_review",
+    "inputs": [
+      {
+        "name": "proposal_id",
+        "type": "uint64"
+      },
+      {
+        "name": "provided_hash",
+        "type": "bytes32"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "set_governance_token",
+    "inputs": [
+      {
+        "name": "token_address",
+        "type": "address"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "event",
+    "name": "TokensStaked",
+    "inputs": [
+      {
+        "name": "sender",
+        "type": "address",
+        "indexed": true
+      },
+      {
+        "name": "amount",
+        "type": "uint256",
+        "indexed": false
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "ProposalSubmitted",
+    "inputs": [
+      {
+        "name": "proposer",
+        "type": "address",
+        "indexed": true
+      },
+      {
+        "name": "proposal_id",
+        "type": "uint64",
+        "indexed": false
+      },
+      {
+        "name": "descriptionHash",
+        "type": "bytes32",
+        "indexed": false
+      },
+      {
+        "name": "action_target",
+        "type": "address",
+        "indexed": false
+      },
+      {
+        "name": "action_payload",
+        "type": "bytes32",
+        "indexed": false
+      },
+      {
+        "name": "expiryTimestamp",
+        "type": "uint64",
+        "indexed": false
+      },
+      {
+        "name": "description",
+        "type": "string",
+        "indexed": false
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "VoteCast",
+    "inputs": [
+      {
+        "name": "voter",
+        "type": "address",
+        "indexed": true
+      },
+      {
+        "name": "proposal_id",
+        "type": "uint64",
+        "indexed": true
+      },
+      {
+        "name": "approve",
+        "type": "bool",
+        "indexed": false
+      },
+      {
+        "name": "power",
+        "type": "uint256",
+        "indexed": false
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "SignerAdded",
+    "inputs": [
+      {
+        "name": "signer",
+        "type": "address",
+        "indexed": true
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "ProposalExecuted",
+    "inputs": [
+      {
+        "name": "proposal_id",
+        "type": "uint64",
+        "indexed": true
+      },
+      {
+        "name": "target",
+        "type": "address",
+        "indexed": false
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "MintingSuccess",
+    "inputs": [
+      {
+        "name": "to",
+        "type": "address",
+        "indexed": true
+      },
+      {
+        "name": "value",
+        "type": "uint256",
+        "indexed": false
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "BurningSuccess",
+    "inputs": [
+      {
+        "name": "from",
+        "type": "address",
+        "indexed": true
+      },
+      {
+        "name": "value",
+        "type": "uint256",
+        "indexed": false
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "TransferSuccess",
+    "inputs": [
+      {
+        "name": "from",
+        "type": "address",
+        "indexed": true
+      },
+      {
+        "name": "to",
+        "type": "address",
+        "indexed": true
+      },
+      {
+        "name": "value",
+        "type": "uint256",
+        "indexed": false
+      }
+    ],
+    "anonymous": false
+  }
+]

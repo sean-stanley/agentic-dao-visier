@@ -18,7 +18,7 @@ const MULTI_SIG_THRESHOLD: u8 = 3;
 // defining events and errors
 sol! {
     event TokensStaked(address indexed sender, uint256 amount);
-    event ProposalSubmitted(address indexed proposer, uint64 proposal_id, bytes32 descriptionHash, address action_target, bytes32 action_payload);
+    event ProposalSubmitted(address indexed proposer, uint64 proposal_id, bytes32 descriptionHash, address action_target, bytes32 action_payload, uint64 expiryTimestamp, string description);
     event VoteCast(address indexed voter, uint64 proposal_id, bool approve, uint256 power);
     event SignerAdded(address indexed signer);
     event ProposalApproved(address indexed signer, uint64 proposal_id);
@@ -98,19 +98,6 @@ impl DAO {
         if msg::sender() != self.owner.get() {
             panic!("Not the owner");
         }
-    }    
-
-    /// Mint governance tokens through the token contract
-    pub fn mint_tokens(&mut self, amount: U256) -> Result<(), Vec<u8>> {
-        let token_address = self.governance_token.get();  // Retrieve stored token contract address
-        let token_contract = IStylusToken::from(token_address);  // Create an instance from the address
-    
-        let config = Call::new_in(self)  // Configure the call
-            .gas(evm::gas_left() / 2);   // Use half of the remaining gas
-    
-        token_contract.mint(config, amount)?; // Call mint function
-    
-        Ok(())
     }
 
     /// Mint governance tokens to a specific address through the token contract
@@ -129,43 +116,6 @@ impl DAO {
         });
     
         Ok(())
-    }
-
-    /// Burn governance tokens through the token contract
-    pub fn burn_tokens(&mut self, amount: U256) -> Result<(), Vec<u8>> {
-        let token_address = self.governance_token.get();  // Retrieve stored token contract address
-        let token_contract = IStylusToken::from(token_address);  // Create an instance from the address
-    
-        let config = Call::new_in(self)  // Configure the call
-            .gas(evm::gas_left() / 2);   // Use half of the remaining gas
-    
-        token_contract.burn(config, amount)?; // Call burn function
-
-        evm::log(BurningSuccess {
-            from: msg::sender(),
-            value: amount.to(),
-        });
-    
-        Ok(())
-    }
-
-    /// Transfer governance tokens through the token contract
-    pub fn transfer_tokens(&mut self, to: Address, amount: U256) -> Result<bool, Vec<u8>> {
-        let token_address = self.governance_token.get();  // Retrieve stored token contract address
-        let token_contract = IStylusToken::from(token_address);  // Create an instance from the address
-    
-        let config = Call::new_in(self)  // Configure the call
-            .gas(evm::gas_left() / 2);   // Use half of the remaining gas
-    
-        let success = token_contract.transfer(config, to, amount)?; // Call transfer function
-
-        evm::log(TransferSuccess {
-            from: msg::sender(),
-            to,
-            value: amount.to(),
-        });
-    
-        Ok(success)
     }
 
     // /// Stake governance tokens for voting (Tokens are locked until the voting period ends)
@@ -223,9 +173,11 @@ impl DAO {
 
         // emit event
         evm::log(ProposalSubmitted {
-            proposer: msg::sender(),
             proposal_id: proposal_id.to(),
+            proposer: msg::sender(),
             descriptionHash: fixed_description_hash,
+            expiryTimestamp: proposal.expiry_timestamp.get().to(),
+            description: description,
             action_target: action_target,
             action_payload: action_payload,
         });
@@ -288,40 +240,42 @@ impl DAO {
         });
     }
 
-    /// Approve a proposal execution (Only signers can call this)
-    pub fn approve_execution(&mut self, proposal_id: u64) {
-        let signer = msg::sender();
-        if self.signers.get(signer).is_empty() {
-            panic!("Only designated signers can approve execution.");
-        }
+    // commented out to save gas costs
+    
+    // /// Approve a proposal execution (Only signers can call this)
+    // pub fn approve_execution(&mut self, proposal_id: u64) {
+    //     let signer = msg::sender();
+    //     if self.signers.get(signer).is_empty() {
+    //         panic!("Only designated signers can approve execution.");
+    //     }
 
-        // remove instead of get lets us take ownership of the proposal
-        let mut proposal = self.proposals.setter(proposal_id);
+    //     // remove instead of get lets us take ownership of the proposal
+    //     let mut proposal = self.proposals.setter(proposal_id);
 
-        // Prevent double approvals
-        let mut approvals = self.signer_approvals.setter(proposal_id);
+    //     // Prevent double approvals
+    //     let mut approvals = self.signer_approvals.setter(proposal_id);
 
-        if approvals.get(signer) {
-            panic!("Signer has already approved this proposal.");
-        }
+    //     if approvals.get(signer) {
+    //         panic!("Signer has already approved this proposal.");
+    //     }
 
-        approvals.insert(signer, true);
-        let current_approval_count = proposal.approvals.get();
-        proposal.approvals.set(current_approval_count + Uint::from(1));
+    //     approvals.insert(signer, true);
+    //     let current_approval_count = proposal.approvals.get();
+    //     proposal.approvals.set(current_approval_count + Uint::from(1));
         
-        // Emit ProposalApproved event
-        evm::log(ProposalApproved {
-            signer,
-            proposal_id,
-        });
+    //     // Emit ProposalApproved event
+    //     evm::log(ProposalApproved {
+    //         signer,
+    //         proposal_id,
+    //     });
 
-        let total_approvals = proposal.approvals.get();
+    //     let total_approvals = proposal.approvals.get();
 
-        // If enough signers approve, execute the proposal
-        if total_approvals >= Uint::from(MULTI_SIG_THRESHOLD) {
-            self.execute_proposal(proposal_id);
-        }
-    }
+    //     // If enough signers approve, execute the proposal
+    //     if total_approvals >= Uint::from(MULTI_SIG_THRESHOLD) {
+    //         self.execute_proposal(proposal_id);
+    //     }
+    // }
 
     /// Execute a proposal if it meets all conditions
     pub fn execute_proposal(&mut self, proposal_id: u64) {
