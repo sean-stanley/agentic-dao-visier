@@ -16,6 +16,7 @@
     "ethereum-blockies": "^0.1.1",
     "ethers": "^6.13.5",
     "next": "15.1.6",
+    "next-mdx-remote": "^5.0.0",
     "nillion-sv-wrappers": "^1.0.6",
     "openai": "^4.82.0",
     "react": "^19.0.0",
