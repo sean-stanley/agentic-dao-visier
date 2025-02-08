@@ -3,6 +3,7 @@ import OpenAI from "openai";
 import { ethers, keccak256 } from "ethers";
 import insertReview from "./nillion/insert_review";
 import chatCompletion from "./nillion/chat_completion";
+import { DAO_ABI, DAO_CONTRACT } from "./lib/ethers";
 
 type ResponseData = {
   message: string;
@@ -92,19 +93,6 @@ const DAO_INFO = {
   delegates: 445e6
 };
 
-// Example contract data
-const ABI = [
-  "function mint(address to, uint256 amount)",
-  "function transfer(address to, uint256 amount)",
-  "function balanceOf(address owner) view returns (uint256)",
-  "function stake(address to, uint256 amount)",
-  "function unstake(address to, uint256 amount)",
-  "function treasury() view returns (address)",
-  "function update_proposal_with_ai_review(uint256 proposal_id, bytes32 ai_review_hash) public",
-  "function verify_ai_review(uint256 proposal_id, bytes32 provided_hash) public view returns (bool)",
-  // Add other function signatures if necessary
-];
-
 // Got this here if necessary.
 // function decodeFunctionCall(encodedData: string): string {
 //   // Initialize Interface with the contract ABI
@@ -131,7 +119,7 @@ const RESEARCHER = {
     DAO_INFO: Record<string, string | number>,
     stakingDistributions: [string, number][],
     treasuryState: Record<string, Amount>,
-    tokenomics: Record<string, number|string>,
+    tokenomics: Record<string, number | string>,
     proposalAction: string,
     proposalTarget: string
   ) => `
@@ -141,7 +129,7 @@ const RESEARCHER = {
     ${JSON.stringify(DAO_INFO, null, 2)}
 
     **Smart Contract ABI**
-    ${ABI.map((sig) => `- ${sig}`).join("\n")}
+    ${DAO_ABI.map((sig) => `- ${sig}`).join("\n")}
 
     **Previous Proposals**
     [] // Not yet implemented
@@ -202,17 +190,8 @@ export function makeReportHash(report: string): string {
 }
 
 export async function updateProposal(proposalId: number, hashId: string): Promise<void> {
-  const provider = new ethers.JsonRpcProvider(process.env.ARBITRUM_RPC_URL);
-  const wallet = new ethers.Wallet(process.env.PRIVATE_KEY ?? '', provider);
-
-  const contract = new ethers.Contract(
-    process.env.CONTRACT_ADDRESS ?? '',
-    ABI,
-    wallet
-  );
-
   try {
-    const tx = await contract.update_proposal_with_ai_review(
+    const tx = await DAO_CONTRACT.update_proposal_with_ai_review(
       proposalId,
       hashId
     );
@@ -231,13 +210,17 @@ export async function makeReport(data: AgentData): Promise<ResponseData> {
   // proposer is the address of the proposer. Though could include more info
   // target is the address of the contract the proposal is targeting. This is most relevant if the proposal would modify a target outside of the DAO
   // action is the non-encoded function call that the proposal is suggesting. A plain-text version is actually possible to analyse.
+  // TODO: add action_payload and action_target to event
   const { proposal, proposer, action_payload: action, action_target: target } = data;
   console.log(target, action, proposer, proposal);
 
+  // TODO: get proposals from the contract
+  const stakingDistributions = (await DAO_CONTRACT.getStakedAddress()).tx()
+
   // TODO: get other proposals from the DAO
-  const stakingDistributions: [string, number][] = [
-    ["0x6Ee1Cc0Db59e31F43c6712759C9A20123FCa1815", 100000],
-  ]; // 2d array of [address, amount][]
+  // const stakingDistributions: [string, number][] = [
+  //   ["0x6Ee1Cc0Db59e31F43c6712759C9A20123FCa1815", 100000],
+  // ]; // 2d array of [address, amount][]
 
   // TODO: this could be an array of treasury sources from published addresses across various networks.
   const treasuryStatus = {
@@ -246,12 +229,12 @@ export async function makeReport(data: AgentData): Promise<ResponseData> {
     locked: { amount: 0.0, asset: "ALG" },
   };
 
-  //  
+  // TODO: do we want supply to come from token contract directly
   const tokenomics = {
     token: "ALG",
     totalSupply: 15.3e6,
     circulatingSupply: 6.9e6,
-    inflationRate: 0,
+    inflationRate: 0.1,
   };
 
   const research_message = RESEARCHER.prompt(
