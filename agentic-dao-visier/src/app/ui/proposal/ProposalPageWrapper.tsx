@@ -1,18 +1,16 @@
 import ProposalVoteAndTimeline from "./ProposalVotePanel";
-import { VoteData, TimelineData, ExtendedProposal } from "@/app/types";
+import { VoteData, TimelineData } from "@/app/types";
 import ProposalTabContainer from "./ProposalTabContainer";
 import Tab from "./Tab";
 import { promises as fs } from "fs";
 import path from "path";
 
 interface ProposalPageWrapperProps {
-  proposal: ExtendedProposal;
   voteData: VoteData;
   timeline: TimelineData;
 }
 
 export default async function ProposalPageWrapper({
-  proposal,
   voteData,
   timeline,
 }: ProposalPageWrapperProps) {
