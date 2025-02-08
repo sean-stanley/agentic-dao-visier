@@ -1,0 +1,10 @@
+query ExampleQuery {
+  proposalSubmitteds(first: 10) {
+    description
+    descriptionHash
+    expiryTimestamp
+    id
+    proposal_id
+    proposer
+  }
+}
