@@ -50,7 +50,7 @@ export default async function main(proposal: string) {
     // Log first 5 records
     console.log("Most recent records", decryptedCollectionData.slice(0, 5));
   } catch (error) {
-    console.error("❌ SecretVaultWrapper error:", error.message);
+    console.error("❌ SecretVaultWrapper error:", error);
     process.exit(1);
   }
 }

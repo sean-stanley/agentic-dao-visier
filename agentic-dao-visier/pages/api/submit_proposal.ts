@@ -4,25 +4,9 @@ import { SecretVaultWrapper } from "nillion-sv-wrappers";
 import { orgConfig, PROPOSAL_SCHEMA_ID } from "./nillion/nillion_org_config";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { makeProposalRecord } from "./nillion/insert_proposal";
+import { DAO_CONTRACT } from "./lib/ethers";
 
 dotenv.config();
-
-// Load environment variables
-const ARBITRUM_RPC_URL = process.env.ARBITRUM_RPC_URL;
-const PRIVATE_KEY = process.env.PRIVATE_KEY;
-const CONTRACT_ADDRESS = process.env.CONTRACT_ADDRESS;
-
-
-// Initialize provider, wallet, and contract
-const provider = new ethers.JsonRpcProvider(ARBITRUM_RPC_URL);
-const wallet = new ethers.Wallet(PRIVATE_KEY ?? '', provider);
-
-const ABI = [
-  "function submit_proposal(bytes32 description_hash, address target, bytes action) public returns (uint256)",
-  "function proposals(uint256) public view returns (tuple(address proposer, bytes32 description_hash, bytes32 ai_review_hash, uint8 ai_review_score, uint256 vote_yes, uint256 vote_no, uint64 expiry_timestamp, bool executed))",
-];
-
-const contract = new ethers.Contract(CONTRACT_ADDRESS ?? '', ABI, wallet);
 
 /**
  * Submits a proposal to the DAO smart contract
@@ -47,7 +31,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     console.log("Submitting proposal with hash:", descriptionHash);
 
     // Submit proposal
-    const tx = await contract.submit_proposal(proposal, target, action);
+    const tx = await DAO_CONTRACT.submit_proposal(proposal, target, action);
     const receipt = await tx.wait();
 
     // Extract proposal ID from transaction logs
@@ -55,7 +39,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     console.log("✅ Proposal submitted with ID:", proposalId);
 
     // Fetch the proposal from the contract
-    const proposalData = await contract.proposals(proposalId);
+    const proposalData = await DAO_CONTRACT.proposals(proposalId);
     const storedHash = proposalData.description_hash;
 
     console.log(`Stored hash on-chain: ${storedHash}`);

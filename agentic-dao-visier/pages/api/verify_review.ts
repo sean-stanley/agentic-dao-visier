@@ -1,5 +1,5 @@
-import { ethers } from "ethers";
 import { NextApiRequest, NextApiResponse } from "next";
+import { DAO_CONTRACT } from "./lib/ethers";
 
 type ResponseData = {
   valid: boolean;
@@ -40,23 +40,9 @@ export const config = {
   maxDuration: 5 * 60, // 5 minutes to generate the report from LLM agents,
 };
 
-const ABI = [
-  "function update_proposal_with_ai_review(uint256 proposal_id, bytes32 ai_review_hash) public",
-  "function verify_ai_review(uint256 proposal_id, bytes32 provided_hash) public view returns (bool)",
-];
-
 async function verifyAIReview(proposalId: number, aiReviewHash: string) {
-  const provider = new ethers.JsonRpcProvider(process.env.ARBITRUM_RPC_URL);
-  const wallet = new ethers.Wallet(process.env.PRIVATE_KEY ?? "", provider);
-
-  const contract = new ethers.Contract(
-    process.env.CONTRACT_ADDRESS ?? "",
-    ABI,
-    wallet
-  );
-
   try {
-    const isValid = await contract.verify_ai_review(proposalId, aiReviewHash);
+    const isValid = await DAO_CONTRACT.verify_ai_review(proposalId, aiReviewHash);
     console.log(
       isValid ? "✅ AI review is authentic!" : "❌ AI review is NOT authentic."
     );
