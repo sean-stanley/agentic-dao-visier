@@ -317,28 +317,28 @@ impl DAO {
 
     /// Update a proposal with an AI review hash (Only once)
     pub fn update_proposal_with_ai_review(&mut self, proposal_id: u64, ai_review_hash: [u8; 32], score: u8) {
-        // let mut proposal = self.proposals.setter(proposal_id);
+        let mut proposal = self.proposals.setter(proposal_id);
 
-        // // Ensure the AI review hasn't already been set
-        // if proposal.ai_review_hash.len() > 1 {
-        //     panic!("AI review hash already set for this proposal.");
-        // }
+        // Ensure the AI review hasn't already been set
+        if proposal.ai_review_hash.len() > 1 {
+            panic!("AI review hash already set for this proposal.");
+        }
 
-        // // Validate hash format (must be exactly 32 bytes)
-        // if ai_review_hash.len() != 32 {
-        //     panic!("Invalid AI review hash. Must be a Keccak256 hash.");
-        // }
+        // Validate hash format (must be exactly 32 bytes)
+        if ai_review_hash.len() != 32 {
+            panic!("Invalid AI review hash. Must be a Keccak256 hash.");
+        }
 
-        // // Store the AI review hash
-        // proposal.ai_review_hash.set_bytes(ai_review_hash);
-        // proposal.ai_risk_score.set(Uint::from(score));
+        // Store the AI review hash
+        proposal.ai_review_hash.set_bytes(ai_review_hash);
+        proposal.ai_risk_score.set(Uint::from(score));
 
-        // // Emit AI review event
-        // evm::log(ProposalAIUpdated {
-        //     proposal_id,
-        //     ai_review_hash: FixedBytes::<32>::from(ai_review_hash),
-        //     score,
-        // });
+        // Emit AI review event
+        evm::log(ProposalAIUpdated {
+            proposal_id,
+            ai_review_hash: FixedBytes::<32>::from(ai_review_hash),
+            score,
+        });
     }
 
     /// Verify an AI review against the stored hash
