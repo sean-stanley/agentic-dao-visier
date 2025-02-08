@@ -27,6 +27,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@graphprotocol/client-cli": "^3.0.7",
     "@types/ethereum-blockies": "^0.1.2",
     "@types/node": "^22",
     "@types/react": "^19",
