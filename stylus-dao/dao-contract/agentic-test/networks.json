@@ -1,8 +1,0 @@
-{
-  "arbitrum-sepolia": {
-    "Contract": {
-      "address": "0x91474f0009f20df9c2af8ca0c6ffaf354416b1cb",
-      "startBlock": 120619922
-    }
-  }
-}
