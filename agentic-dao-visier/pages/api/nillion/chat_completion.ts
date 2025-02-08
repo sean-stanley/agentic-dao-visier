@@ -1,4 +1,5 @@
 import axios, { AxiosResponse } from "axios";
+import { ChatCompletion } from "openai/resources/chat/index.mjs";
 
 const BEARER_TOKEN = "Nillion2025";
 
@@ -11,7 +12,7 @@ export interface Message {
 
 const chatCompletion =  async (
   messages: Message[]
-): Promise<AxiosResponse<unknown>> => {
+): Promise<AxiosResponse<ChatCompletion>> => {
   const data = JSON.stringify({
     model: "meta-llama/Llama-3.1-8B-Instruct",
     messages,
@@ -32,7 +33,7 @@ const chatCompletion =  async (
     data,
   };
 
-  return axios.post(API_URL, config);
+  return axios.post<ChatCompletion>(API_URL, config);
 }
 
 export default chatCompletion;

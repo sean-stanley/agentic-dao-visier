@@ -84,7 +84,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       "👀 Data written to nodes:",
       JSON.stringify(dataWritten, null, 2)
     );
-    res.status(201).json({message: "successfully added proposal on-chain with nillion storage backup", proposal_id })
+    res
+      .status(201)
+      .json({
+        message:
+          "successfully added proposal on-chain with nillion storage backup",
+        proposal_id: proposalId,
+      });
   } catch (err) {
     console.error(err);
     return res.status(500).json({"error": "something went wrong"})

@@ -2,13 +2,12 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import OpenAI from "openai";
 import { ethers, keccak256 } from "ethers";
 import insertReview from "./nillion/insert_review";
-import { Review } from "./nillion/types/review";
 import chatCompletion from "./nillion/chat_completion";
 
 type ResponseData = {
   message: string;
   research?: string;
-  review?: Review;
+  review?: { report: string, score: number };
 };
 
 
@@ -45,7 +44,7 @@ const openai = new OpenAI({
 });
 
 const TOOL_NAME = "ReportFormatter";
-const REASONING_MODEL = "o1-preview";
+// const REASONING_MODEL = "o1-preview";
 const GENERAL_MODEL = "gpt-4o-2024-11-20";
 
 const SYSTEM_PROMPT = `You are an AI governance advisor for a decentralized autonomous organization (DAO) running on Arbitrum Stylus. Your task is to analyze DAO proposals and generate a structured risk assessment. Consider potential risks, past governance trends, treasury sustainability, and voting manipulation. Provide an overall risk score from 0 to 100, where 0 is no risk and 100 is extremely high risk. Keep the response structured and include an analysis of financial, security, and governance risks. Only base your analysis on provided data—avoid speculation."
@@ -271,17 +270,7 @@ export async function makeReport(data: AgentData): Promise<ResponseData> {
     { role: "system", content: research_message },
   ]);
 
-  const researcherResult = await openai.chat.completions.create({
-    model: RESEARCHER.model,
-    messages: [
-      {
-        role: "system",
-        content: research_message,
-      },
-    ],
-  });
-
-  const formattedReport = researcherResult.choices[0].message.content ?? "";
+  const formattedReport = researcherResult.data.choices[0].message.content ?? "";
 
   // main report generation
   // BONUS: could split the researcher into various API tool calls to let the reasoning model choose when to lookup extra info and process in a loop until it has what it thinks is relevant info for the proposal.
