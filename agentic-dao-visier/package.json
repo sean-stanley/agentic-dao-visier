@@ -12,6 +12,7 @@
     "@heroicons/react": "^2.2.0",
     "@rainbow-me/rainbowkit": "^2.2.3",
     "@tanstack/react-query": "^5.66.0",
+    "axios": "^1.7.9",
     "ethereum-blockies": "^0.1.1",
     "ethers": "^6.13.5",
     "next": "15.1.6",

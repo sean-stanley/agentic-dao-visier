@@ -2,12 +2,13 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import OpenAI from "openai";
 import { ethers, keccak256 } from "ethers";
 import insertReview from "./nillion/insert_review";
-import { ReviewResult } from "./nillion/types/review";
+import { Review } from "./nillion/types/review";
+import chatCompletion from "./nillion/chat_completion";
 
 type ResponseData = {
   message: string;
   research?: string;
-  review?: ReviewResult
+  review?: Review;
 };
 
 
@@ -265,6 +266,10 @@ export async function makeReport(data: AgentData): Promise<ResponseData> {
   );
 
   console.log(research_message)
+
+  const researcherResult = await chatCompletion([
+    { role: "system", content: research_message },
+  ]);
 
   const researcherResult = await openai.chat.completions.create({
     model: RESEARCHER.model,
