@@ -8,9 +8,9 @@ dataSources:
     name: Contract
     network: arbitrum-sepolia
     source:
-      address: "0x72ee5e83ba9134c7ef5795bde6c85d112584c1e8"
+      address: "0x07ecc8b4a57310d529d407893e7c4a900537b2d3"
       abi: Contract
-      startBlock: 122200248
+      startBlock: 122201428
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
