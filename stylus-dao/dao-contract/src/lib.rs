@@ -363,7 +363,7 @@ impl DAO {
     }
 
     /// Update a proposal with an AI review hash (Only once)
-    pub fn update_proposal_with_ai_review(&mut self, proposal_id: u64, ai_review_hash: [u8; 32]) {
+    pub fn update_proposal_with_ai_review(&mut self, proposal_id: u64, ai_review_hash: [u8; 32], score: u8) {
         let mut proposal = self.proposals.setter(proposal_id);
 
         // Ensure the AI review hasn't already been set
@@ -378,6 +378,7 @@ impl DAO {
 
         // Store the AI review hash
         proposal.ai_review_hash.set_bytes(ai_review_hash);
+        proposal.ai_risk_score.set(Uint::from(score));
     }
 
     /// Verify an AI review against the stored hash
