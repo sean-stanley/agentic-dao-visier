@@ -40,6 +40,15 @@ type SignerAdded @entity(immutable: true) {
   transactionHash: Bytes!
 }
 
+type ProposalApproved @entity(immutable: true) {
+  id: Bytes!
+  signer: Bytes! # address
+  proposal_id: BigInt! # uint64
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
 type ProposalExecuted @entity(immutable: true) {
   id: Bytes!
   proposal_id: BigInt! # uint64
@@ -58,20 +67,11 @@ type MintingSuccess @entity(immutable: true) {
   transactionHash: Bytes!
 }
 
-type BurningSuccess @entity(immutable: true) {
+type ProposalAIUpdated @entity(immutable: true) {
   id: Bytes!
-  from: Bytes! # address
-  value: BigInt! # uint256
-  blockNumber: BigInt!
-  blockTimestamp: BigInt!
-  transactionHash: Bytes!
-}
-
-type TransferSuccess @entity(immutable: true) {
-  id: Bytes!
-  from: Bytes! # address
-  to: Bytes! # address
-  value: BigInt! # uint256
+  proposal_id: BigInt! # uint64
+  ai_review_hash: Bytes! # bytes32
+  score: Int! # uint8
   blockNumber: BigInt!
   blockTimestamp: BigInt!
   transactionHash: Bytes!

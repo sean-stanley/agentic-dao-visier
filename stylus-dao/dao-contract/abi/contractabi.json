@@ -1,18 +1,6 @@
 [
   {
     "type": "function",
-    "name": "token_address",
-    "inputs": [],
-    "outputs": [
-      {
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
     "name": "init",
     "inputs": [
       {
@@ -183,8 +171,7 @@
         "type": "uint256",
         "indexed": false
       }
-    ],
-    "anonymous": false
+    ]
   },
   {
     "type": "event",
@@ -225,8 +212,7 @@
         "type": "string",
         "indexed": false
       }
-    ],
-    "anonymous": false
+    ]
   },
   {
     "type": "event",
@@ -240,7 +226,7 @@
       {
         "name": "proposal_id",
         "type": "uint64",
-        "indexed": true
+        "indexed": false
       },
       {
         "name": "approve",
@@ -252,8 +238,7 @@
         "type": "uint256",
         "indexed": false
       }
-    ],
-    "anonymous": false
+    ]
   },
   {
     "type": "event",
@@ -264,8 +249,23 @@
         "type": "address",
         "indexed": true
       }
-    ],
-    "anonymous": false
+    ]
+  },
+  {
+    "type": "event",
+    "name": "ProposalApproved",
+    "inputs": [
+      {
+        "name": "signer",
+        "type": "address",
+        "indexed": true
+      },
+      {
+        "name": "proposal_id",
+        "type": "uint64",
+        "indexed": false
+      }
+    ]
   },
   {
     "type": "event",
@@ -274,15 +274,14 @@
       {
         "name": "proposal_id",
         "type": "uint64",
-        "indexed": true
+        "indexed": false
       },
       {
         "name": "target",
         "type": "address",
         "indexed": false
       }
-    ],
-    "anonymous": false
+    ]
   },
   {
     "type": "event",
@@ -298,46 +297,32 @@
         "type": "uint256",
         "indexed": false
       }
-    ],
-    "anonymous": false
+    ]
   },
   {
     "type": "event",
-    "name": "BurningSuccess",
+    "name": "ProposalAIUpdated",
     "inputs": [
       {
-        "name": "from",
-        "type": "address",
-        "indexed": true
+        "name": "proposal_id",
+        "type": "uint64",
+        "indexed": false
       },
       {
-        "name": "value",
-        "type": "uint256",
+        "name": "ai_review_hash",
+        "type": "bytes32",
+        "indexed": false
+      },
+      {
+        "name": "score",
+        "type": "uint8",
         "indexed": false
       }
-    ],
-    "anonymous": false
+    ]
   },
   {
-    "type": "event",
-    "name": "TransferSuccess",
-    "inputs": [
-      {
-        "name": "from",
-        "type": "address",
-        "indexed": true
-      },
-      {
-        "name": "to",
-        "type": "address",
-        "indexed": true
-      },
-      {
-        "name": "value",
-        "type": "uint256",
-        "indexed": false
-      }
-    ],
-    "anonymous": false
+    "type": "error",
+    "name": "NotOwner",
+    "inputs": []
   }
 ]

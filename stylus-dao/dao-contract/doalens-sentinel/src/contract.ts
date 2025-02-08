@@ -3,20 +3,20 @@ import {
   ProposalSubmitted as ProposalSubmittedEvent,
   VoteCast as VoteCastEvent,
   SignerAdded as SignerAddedEvent,
+  ProposalApproved as ProposalApprovedEvent,
   ProposalExecuted as ProposalExecutedEvent,
   MintingSuccess as MintingSuccessEvent,
-  BurningSuccess as BurningSuccessEvent,
-  TransferSuccess as TransferSuccessEvent
+  ProposalAIUpdated as ProposalAIUpdatedEvent
 } from "../generated/Contract/Contract"
 import {
   TokensStaked,
   ProposalSubmitted,
   VoteCast,
   SignerAdded,
+  ProposalApproved,
   ProposalExecuted,
   MintingSuccess,
-  BurningSuccess,
-  TransferSuccess
+  ProposalAIUpdated
 } from "../generated/schema"
 
 export function handleTokensStaked(event: TokensStakedEvent): void {
@@ -81,6 +81,20 @@ export function handleSignerAdded(event: SignerAddedEvent): void {
   entity.save()
 }
 
+export function handleProposalApproved(event: ProposalApprovedEvent): void {
+  let entity = new ProposalApproved(
+    event.transaction.hash.concatI32(event.logIndex.toI32())
+  )
+  entity.signer = event.params.signer
+  entity.proposal_id = event.params.proposal_id
+
+  entity.blockNumber = event.block.number
+  entity.blockTimestamp = event.block.timestamp
+  entity.transactionHash = event.transaction.hash
+
+  entity.save()
+}
+
 export function handleProposalExecuted(event: ProposalExecutedEvent): void {
   let entity = new ProposalExecuted(
     event.transaction.hash.concatI32(event.logIndex.toI32())
@@ -109,27 +123,13 @@ export function handleMintingSuccess(event: MintingSuccessEvent): void {
   entity.save()
 }
 
-export function handleBurningSuccess(event: BurningSuccessEvent): void {
-  let entity = new BurningSuccess(
+export function handleProposalAIUpdated(event: ProposalAIUpdatedEvent): void {
+  let entity = new ProposalAIUpdated(
     event.transaction.hash.concatI32(event.logIndex.toI32())
   )
-  entity.from = event.params.from
-  entity.value = event.params.value
-
-  entity.blockNumber = event.block.number
-  entity.blockTimestamp = event.block.timestamp
-  entity.transactionHash = event.transaction.hash
-
-  entity.save()
-}
-
-export function handleTransferSuccess(event: TransferSuccessEvent): void {
-  let entity = new TransferSuccess(
-    event.transaction.hash.concatI32(event.logIndex.toI32())
-  )
-  entity.from = event.params.from
-  entity.to = event.params.to
-  entity.value = event.params.value
+  entity.proposal_id = event.params.proposal_id
+  entity.ai_review_hash = event.params.ai_review_hash
+  entity.score = event.params.score
 
   entity.blockNumber = event.block.number
   entity.blockTimestamp = event.block.timestamp

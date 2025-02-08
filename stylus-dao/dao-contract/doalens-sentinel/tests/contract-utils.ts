@@ -5,10 +5,10 @@ import {
   ProposalSubmitted,
   VoteCast,
   SignerAdded,
+  ProposalApproved,
   ProposalExecuted,
   MintingSuccess,
-  BurningSuccess,
-  TransferSuccess
+  ProposalAIUpdated
 } from "../generated/Contract/Contract"
 
 export function createTokensStakedEvent(
@@ -126,6 +126,27 @@ export function createSignerAddedEvent(signer: Address): SignerAdded {
   return signerAddedEvent
 }
 
+export function createProposalApprovedEvent(
+  signer: Address,
+  proposal_id: BigInt
+): ProposalApproved {
+  let proposalApprovedEvent = changetype<ProposalApproved>(newMockEvent())
+
+  proposalApprovedEvent.parameters = new Array()
+
+  proposalApprovedEvent.parameters.push(
+    new ethereum.EventParam("signer", ethereum.Value.fromAddress(signer))
+  )
+  proposalApprovedEvent.parameters.push(
+    new ethereum.EventParam(
+      "proposal_id",
+      ethereum.Value.fromUnsignedBigInt(proposal_id)
+    )
+  )
+
+  return proposalApprovedEvent
+}
+
 export function createProposalExecutedEvent(
   proposal_id: BigInt,
   target: Address
@@ -165,42 +186,33 @@ export function createMintingSuccessEvent(
   return mintingSuccessEvent
 }
 
-export function createBurningSuccessEvent(
-  from: Address,
-  value: BigInt
-): BurningSuccess {
-  let burningSuccessEvent = changetype<BurningSuccess>(newMockEvent())
+export function createProposalAIUpdatedEvent(
+  proposal_id: BigInt,
+  ai_review_hash: Bytes,
+  score: i32
+): ProposalAIUpdated {
+  let proposalAiUpdatedEvent = changetype<ProposalAIUpdated>(newMockEvent())
 
-  burningSuccessEvent.parameters = new Array()
+  proposalAiUpdatedEvent.parameters = new Array()
 
-  burningSuccessEvent.parameters.push(
-    new ethereum.EventParam("from", ethereum.Value.fromAddress(from))
+  proposalAiUpdatedEvent.parameters.push(
+    new ethereum.EventParam(
+      "proposal_id",
+      ethereum.Value.fromUnsignedBigInt(proposal_id)
+    )
   )
-  burningSuccessEvent.parameters.push(
-    new ethereum.EventParam("value", ethereum.Value.fromUnsignedBigInt(value))
+  proposalAiUpdatedEvent.parameters.push(
+    new ethereum.EventParam(
+      "ai_review_hash",
+      ethereum.Value.fromFixedBytes(ai_review_hash)
+    )
   )
-
-  return burningSuccessEvent
-}
-
-export function createTransferSuccessEvent(
-  from: Address,
-  to: Address,
-  value: BigInt
-): TransferSuccess {
-  let transferSuccessEvent = changetype<TransferSuccess>(newMockEvent())
-
-  transferSuccessEvent.parameters = new Array()
-
-  transferSuccessEvent.parameters.push(
-    new ethereum.EventParam("from", ethereum.Value.fromAddress(from))
-  )
-  transferSuccessEvent.parameters.push(
-    new ethereum.EventParam("to", ethereum.Value.fromAddress(to))
-  )
-  transferSuccessEvent.parameters.push(
-    new ethereum.EventParam("value", ethereum.Value.fromUnsignedBigInt(value))
+  proposalAiUpdatedEvent.parameters.push(
+    new ethereum.EventParam(
+      "score",
+      ethereum.Value.fromUnsignedBigInt(BigInt.fromI32(score))
+    )
   )
 
-  return transferSuccessEvent
+  return proposalAiUpdatedEvent
 }

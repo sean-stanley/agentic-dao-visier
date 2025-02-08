@@ -8,9 +8,9 @@ dataSources:
     name: Contract
     network: arbitrum-sepolia
     source:
-      address: "0x04f38de173fc18db81f0cd4edb475b492fd8a7e3"
+      address: "0x78d14399ba792c3e5e7752345363c86c6963d3f7"
       abi: Contract
-      startBlock: 122061182
+      startBlock: 122198603
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -20,10 +20,10 @@ dataSources:
         - ProposalSubmitted
         - VoteCast
         - SignerAdded
+        - ProposalApproved
         - ProposalExecuted
         - MintingSuccess
-        - BurningSuccess
-        - TransferSuccess
+        - ProposalAIUpdated
       abis:
         - name: Contract
           file: ./abis/Contract.json
@@ -32,16 +32,16 @@ dataSources:
           handler: handleTokensStaked
         - event: ProposalSubmitted(indexed address,uint64,bytes32,address,bytes32,uint64,string)
           handler: handleProposalSubmitted
-        - event: VoteCast(indexed address,indexed uint64,bool,uint256)
+        - event: VoteCast(indexed address,uint64,bool,uint256)
           handler: handleVoteCast
         - event: SignerAdded(indexed address)
           handler: handleSignerAdded
-        - event: ProposalExecuted(indexed uint64,address)
+        - event: ProposalApproved(indexed address,uint64)
+          handler: handleProposalApproved
+        - event: ProposalExecuted(uint64,address)
           handler: handleProposalExecuted
         - event: MintingSuccess(indexed address,uint256)
           handler: handleMintingSuccess
-        - event: BurningSuccess(indexed address,uint256)
-          handler: handleBurningSuccess
-        - event: TransferSuccess(indexed address,indexed address,uint256)
-          handler: handleTransferSuccess
+        - event: ProposalAIUpdated(uint64,bytes32,uint8)
+          handler: handleProposalAIUpdated
       file: ./src/contract.ts
