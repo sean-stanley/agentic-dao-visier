@@ -1,9 +1,6 @@
-'use client';
-
-import ProposalDetails from './ProposalDetails';
-import ProposalVoteAndTimeline from './ProposalVotePanel';
-import { VoteData, TimelineData, ExtendedProposal } from '@/app/types';
-
+import ProposalVoteAndTimeline from "./ProposalVotePanel";
+import { VoteData, TimelineData, ExtendedProposal } from "@/app/types";
+import ProposalReview from "./ProposalReview";
 
 interface ProposalPageWrapperProps {
   proposal: ExtendedProposal;
@@ -16,12 +13,11 @@ export default function ProposalPageWrapper({
   voteData,
   timeline,
 }: ProposalPageWrapperProps) {
-  
   return (
     <div className="mx-auto mt-8 flex flex-col justify-center space-y-8 px-4 lg:flex-row lg:items-start lg:space-y-0 lg:space-x-8">
       {/* Left Column: Proposal Details */}
-      <div className="flex-1">
-        <ProposalDetails proposal={proposal} />
+      <div className="flex-1 w-full">
+        <ProposalReview />
       </div>
 
       {/* Right Column: Votes & Timeline */}
