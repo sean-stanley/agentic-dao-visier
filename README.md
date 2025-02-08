@@ -1,6 +1,6 @@
 <h2 align="center">Sentinel</h2>
 <p align="center">
-  <img src="./sentinel_logo.svg" width="400" height="320" alt="Sentinel Logo">
+  <img src="./sentinel.png" width="180" height="160" alt="Sentinel Logo">
 </p>
 
 <p align="center">
@@ -9,10 +9,52 @@
   <img src="https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat" alt="Contributions Welcome">
 </p>
 
-## :mag: Agentic DAO Governance Simplified
 
-Sentinel is an AI-Agentic platform designed to bring transparency into DAO governance by providing intelligent proposal analysis, secure storage, and onchain visualizations. Sentinel helps voters of DAOs make more informed and secure governance decisions.
+# Sentinel: A Super-Intelligent Auditor for DAO Voters
 
+Sentinel helps DAO voters understand new proposals and spot potential red flags before casting their votes. 
+
+---
+
+## How It Works
+
+1. **Monitoring**  
+   - The system watches a DAO contract for new proposals using TheGraph’s subgraph.  
+
+2. **Storage**  
+   - Sentinel's system stores full proposals off-chain in **NilDB**.  
+   - A corresponding hash is stored on-chain to ensure tamper-proof verification.
+
+3. **Sentinel's Combined AI Agent Workflow**  
+   1. **Researcher Agent** (Hosted on Nillion’s nilAI)  
+      - **Retrieves** the full proposal description from Nillion nodes.  
+      - **Decodes** the proposal action (e.g., target address, treasury details, tokenomics, DAO stakers).  
+      - **Compiles** a clear, structured report for review.  
+
+   2. **Reviewer Agent** (Hosted on OpenAI)  
+      - **Analyzes** the report from the Researcher Agent.  
+      - **Creates** a detailed review focusing on:  
+        - **Financial Risks** (e.g., budget implications)  
+        - **Security Risks** (e.g., vulnerabilities in execution)  
+        - **Governance Risks** (e.g., centralized control concerns)
+
+4. **Storing & Verifying Reviews**  
+   - Once the review is ready, its hash is stored on-chain.  
+   - Voters can verify the on-chain hash against the original report stored in NilDB.
+
+---
+
+## Why Use Sentinel?
+
+- **Informed Decisions**: Voters can make informed decisions without technical knowledge of onchain tokenomic implications 
+- **Security & Trust**: Off-chain and on-chain components ensure proposals and reviews are both accessible and verifiable.  
+- **Scalable Governance**: By automating proposal analysis, DAOs can grow more effectively without sacrificing transparency.
+
+## Demo
+
+For demo purposes, the Sentinel system is connected to a DAO deployed on Arbitrum. The steps are the same for other EVM-compatible chains—just swap out the subgraph and configure NilDB accordingly.
+
+---
 ## ✨ Features
 
 - 🕵️ **DAO Proposal Risk Assessment (Rug Pull Prevention)** 
@@ -20,23 +62,6 @@ Sentinel is an AI-Agentic platform designed to bring transparency into DAO gover
 - 📈 **Tokenomics Analysis (Whale Watching)**
 - 🔗 **Native Arbitrum & Full EVM Compatibility**
 - 🔒 **Transparent and Immutable Proposal Tracking**
-
-## 🔍 How It Works
-
-### 1. Proposal Submission
-- Users submit detailed proposals to the DAO
-- Proposals are cryptographically hashed for verification
-- Stored on Arbitrum blockchain and Nillion SecretVault
-
-### 2. AI Risk Analysis
-- OpenAI models analyze proposal details
-- Generate comprehensive risk assessment
-- Provide a 0-100 risk score covering financial, security, and governance risks
-
-### 3. On-Chain Governance
-- Risk assessments recorded on blockchain
-- Transparent, tamper-proof proposal tracking
-- Enable informed voting and decision-making
 
 ## 🚀 Getting Started
 
