@@ -33,7 +33,6 @@ export function createProposalSubmittedEvent(
   proposer: Address,
   proposal_id: BigInt,
   descriptionHash: Bytes,
-  expiryTimestamp: BigInt,
   description: string,
   vote_yes: BigInt,
   vote_no: BigInt,
@@ -56,12 +55,6 @@ export function createProposalSubmittedEvent(
     new ethereum.EventParam(
       "descriptionHash",
       ethereum.Value.fromFixedBytes(descriptionHash)
-    )
-  )
-  proposalSubmittedEvent.parameters.push(
-    new ethereum.EventParam(
-      "expiryTimestamp",
-      ethereum.Value.fromUnsignedBigInt(expiryTimestamp)
     )
   )
   proposalSubmittedEvent.parameters.push(

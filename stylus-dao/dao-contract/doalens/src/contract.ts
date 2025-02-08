@@ -40,7 +40,6 @@ export function handleProposalSubmitted(event: ProposalSubmittedEvent): void {
   entity.proposer = event.params.proposer
   entity.proposal_id = event.params.proposal_id
   entity.descriptionHash = event.params.descriptionHash
-  entity.expiryTimestamp = event.params.expiryTimestamp
   entity.description = event.params.description
   entity.vote_yes = event.params.vote_yes
   entity.vote_no = event.params.vote_no

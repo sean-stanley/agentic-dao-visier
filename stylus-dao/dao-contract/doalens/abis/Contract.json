@@ -103,7 +103,6 @@
       { "name": "proposer", "type": "address", "indexed": true },
       { "name": "proposal_id", "type": "uint64", "indexed": false },
       { "name": "descriptionHash", "type": "bytes32", "indexed": false },
-      { "name": "expiryTimestamp", "type": "uint64", "indexed": false },
       { "name": "description", "type": "string", "indexed": false },
       { "name": "vote_yes", "type": "uint64", "indexed": false },
       { "name": "vote_no", "type": "uint64", "indexed": false },

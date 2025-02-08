@@ -198,11 +198,6 @@
         "indexed": false
       },
       {
-        "name": "expiryTimestamp",
-        "type": "uint64",
-        "indexed": false
-      },
-      {
         "name": "description",
         "type": "string",
         "indexed": false

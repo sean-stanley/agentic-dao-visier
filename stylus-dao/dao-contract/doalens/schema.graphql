@@ -12,7 +12,6 @@ type ProposalSubmitted @entity(immutable: true) {
   proposer: Bytes! # address
   proposal_id: BigInt! # uint64
   descriptionHash: Bytes! # bytes32
-  expiryTimestamp: BigInt! # uint64
   description: String! # string
   vote_yes: BigInt! # uint64
   vote_no: BigInt! # uint64

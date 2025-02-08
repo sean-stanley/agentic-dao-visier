@@ -19,7 +19,7 @@ const MULTI_SIG_THRESHOLD: u8 = 3;
 // defining events and errors
 sol! {
     event TokensStaked(address indexed sender, uint256 amount);
-    event ProposalSubmitted(address indexed proposer, uint64 proposal_id, bytes32 descriptionHash, uint64 expiryTimestamp, string description, uint64 vote_yes, uint64 vote_no , uint8 ai_risk_score);
+    event ProposalSubmitted(address indexed proposer, uint64 proposal_id, bytes32 descriptionHash, string description, uint64 vote_yes, uint64 vote_no , uint8 ai_risk_score);
     event VoteCast(address indexed voter, uint64 proposal_id, bool approve, uint256 power);
     event SignerAdded(address indexed signer);
     event ProposalApproved(address indexed signer, uint64 proposal_id);
@@ -173,9 +173,8 @@ impl DAO {
             proposal_id: proposal_id.to(),
             proposer: msg::sender(),
             descriptionHash: fixed_description_hash,
-            expiryTimestamp: proposal.expiry_timestamp.get().to(),
-            vote_yes: proposal.vote_yes.get().to(),
-            vote_no: proposal.vote_no.get().to(),
+            vote_yes: yes_votes.to(),
+            vote_no: no_votes.to(),
             ai_risk_score: ai_risk_score.to(),
             description: description,
         });
