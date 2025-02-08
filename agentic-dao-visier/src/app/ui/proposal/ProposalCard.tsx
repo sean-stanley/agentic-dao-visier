@@ -8,7 +8,6 @@ import {
     formatUnixTimestamp,
     formatNumber,
 } from "@/app/lib/wagmi/utils";
-import AddressAvatar from "@/app/lib/blockies/avatar";
 
 // A small pill-like component for the status
 function StatusBadge({ executed }: { executed: boolean }) {
@@ -58,15 +57,9 @@ export default function ProposalCard({ proposal }: { proposal: Proposal }) {
     return (
         <div className="w-full rounded-xl bg-gray-50 p-4 shadow-md">
             <div className="flex items-center justify-between mb-2">
-                {/*example*/}
-                <div className="flex flex-row">
-                    <AddressAvatar
-                        address={"0xA95CBBeEdf916491A4E89f7459F447E1B7b6f45E"}
-                    />
-                    <h3 className="text-l font-bold text-gray-800 px-2">
-                        {proposer}
-                    </h3>
-                </div>
+                <h3 className="text-l font-bold text-gray-800">
+                    {proposer}
+                </h3>
                 <div className="flex items-center space-x-2">
                     <StatusBadge executed={executed} />
                     <span
@@ -107,9 +100,9 @@ export default function ProposalCard({ proposal }: { proposal: Proposal }) {
                         in a treasury account and reward people who are staking
                         in the DAO contract. Payouts weekly to the address that
                         sent the staked asset. So to get compounding returns
-                        youll have to stake more. Staking is also voting so
-                        this encourages community engagement and can increase
-                        the value of our governance token.
+                        youll have to stake more. Staking is also voting so this
+                        encourages community engagement and can increase the
+                        value of our governance token.
                     </p>
                 </div>
             </div>
