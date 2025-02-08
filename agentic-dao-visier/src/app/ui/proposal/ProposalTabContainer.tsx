@@ -2,9 +2,13 @@
 import React, { useState } from "react";
 
 export default function ProposalTabContainer({
-  TabComponent,
+  informationTab,
+  highlightTab,
+  summaryTab,
 }: {
-  TabComponent: React.ReactNode;
+  informationTab: React.ReactElement;
+  highlightTab: React.ReactElement;
+  summaryTab: React.ReactElement;
 }) {
   const [activeTab, setActiveTab] = useState("DAO INFORMATION");
 
@@ -25,7 +29,9 @@ export default function ProposalTabContainer({
           </button>
         ))}
       </div>
-      {TabComponent}
+      {activeTab === "DAO INFORMATION" && informationTab}
+      {activeTab === "KEY HIGHLIGHTS" && highlightTab}
+      {activeTab === "SUMMARY" && summaryTab}
     </div>
   );
 }

@@ -1,6 +1,9 @@
 import ProposalVoteAndTimeline from "./ProposalVotePanel";
 import { VoteData, TimelineData, ExtendedProposal } from "@/app/types";
-import ProposalReview from "./ProposalReview";
+import ProposalTabContainer from "./ProposalTabContainer";
+import Tab from "./Tab";
+import { promises as fs } from "fs";
+import path from "path";
 
 interface ProposalPageWrapperProps {
   proposal: ExtendedProposal;
@@ -8,16 +11,42 @@ interface ProposalPageWrapperProps {
   timeline: TimelineData;
 }
 
-export default function ProposalPageWrapper({
+export default async function ProposalPageWrapper({
   proposal,
   voteData,
   timeline,
 }: ProposalPageWrapperProps) {
+  const content = await fs.readFile(
+    path.join(process.cwd(), "src/app/mocks/review.md"),
+    "utf-8"
+  );
+
+  const parseMarkdownSections = (resp) => {
+    const daoInformationSection = resp.split("**Smart Contract ABI**")[0];
+    const keyHighlightsSection = resp
+      .split("### Key Highlights for Governance Advisor:")[1]
+      .split("**1️⃣ Proposal Summary**")[0];
+    const summarySection = resp.split("**1️⃣ Proposal Summary**")[1];
+
+    return {
+      daoInformation: daoInformationSection,
+      keyHighlights: keyHighlightsSection,
+      summary: summarySection,
+    };
+  };
+
+  const { daoInformation, keyHighlights, summary } =
+    parseMarkdownSections(content);
+
   return (
     <div className="mx-auto mt-8 flex flex-col justify-center space-y-8 px-4 lg:flex-row lg:items-start lg:space-y-0 lg:space-x-8">
       {/* Left Column: Proposal Details */}
       <div className="flex-1 w-full">
-        <ProposalReview />
+        <ProposalTabContainer
+          informationTab={<Tab content={daoInformation} />}
+          highlightTab={<Tab content={keyHighlights} />}
+          summaryTab={<Tab content={summary} />}
+        />
       </div>
 
       {/* Right Column: Votes & Timeline */}
