@@ -100,6 +100,11 @@ impl DAO {
         }
     }
 
+    /// Get stakers
+    pub fn get_stakers(&self) -> Vec<(Address, U64)> {
+        self.staked_balances.iter().collect()
+    }
+
     /// Mint governance tokens to a specific address through the token contract
     pub fn mint_to(&mut self, to: Address, amount: U256) -> Result<(), Vec<u8>> {
         let token_address = self.governance_token.get();  // Retrieve stored token contract address
@@ -114,6 +119,19 @@ impl DAO {
             to,
             value: amount.to(),
         });
+    
+        Ok(())
+    }
+
+    /// burn governance tokens
+    pub fn burn(&mut self, amount: U256) -> Result<(), Vec<u8>> {
+        let token_address = self.governance_token.get();  // Retrieve stored token contract address
+        let token_contract = IStylusToken::from(token_address);  // Create an instance from the address
+    
+        let config = Call::new_in(self)  // Configure the call
+            .gas(evm::gas_left() / 2);   // Use half of the remaining gas
+    
+        token_contract.burn(config, amount)?; // Call burn function
     
         Ok(())
     }
@@ -136,7 +154,7 @@ impl DAO {
     }
 
     /// Submit a new proposal
-    pub fn submit_proposal(
+    pub fn submitProposal(
         &mut self,
         description: String,
         action_target: Address,
@@ -167,8 +185,7 @@ impl DAO {
         proposal.approvals.set(Uint::from(0));
 
         self.proposal_count.set(self.proposal_count.get() + Uint::from(1));
-
-        // emit event
+        
         // emit event
         evm::log(ProposalSubmitted {
             proposer: msg::sender(),
@@ -314,7 +331,7 @@ impl DAO {
     // }
 
     /// Update a proposal with an AI review hash (Only once)
-    pub fn update_proposal_with_ai_review(&mut self, proposal_id: u64, ai_review_hash: [u8; 32], score: u8) {
+    pub fn updateProposalWithAiReview(&mut self, proposal_id: u64, ai_review_hash: [u8; 32], score: u8) {
         let mut proposal = self.proposals.setter(proposal_id);
 
         // Ensure the AI review hasn't already been set
