@@ -8,9 +8,8 @@ import { DAO_ABI, DAO_CONTRACT } from "./lib/ethers";
 type ResponseData = {
   message: string;
   research?: string;
-  review?: { report: string, score: number };
+  review?: { report: string; score: number };
 };
-
 
 interface AgentData {
   id: number;
@@ -33,7 +32,7 @@ export const config = {
     },
   },
   // Specifies the maximum allowed duration for this function to execute (in seconds)
-  maxDuration: 5*60 // 5 minutes to generate the report from LLM agents,
+  maxDuration: 5 * 60, // 5 minutes to generate the report from LLM agents,
 };
 
 const openai = new OpenAI({
@@ -83,14 +82,14 @@ Justify the score with 2-3 supporting points.
 
 const DAO_INFO = {
   name: "Research Governance DAO",
-  contractAddress: process.env.CONTRACT_ADDRESS ?? '', // this will change with future versions
+  contractAddress: process.env.CONTRACT_ADDRESS ?? "", // this will change with future versions
   description:
     "A decentralized autonomous organization (DAO) that governs the Arbitrum Stylus network.",
   symbol: "ALG",
   totalSupply: 1000000,
   circulatingSupply: 500000,
   inflationRate: 0.05,
-  delegates: 445e6
+  delegates: 445e6,
 };
 
 // Got this here if necessary.
@@ -173,7 +172,7 @@ export default async function handler(
     res.status(200).json(result);
 
     // TODO: store the review on Nillion nodes
-    insertReview(result)
+    insertReview(result);
 
     // update proposal with AI review hash
     await updateProposal(body.id, id);
@@ -186,10 +185,13 @@ export default async function handler(
 }
 
 export function makeReportHash(report: string): string {
-  return keccak256(ethers.toUtf8Bytes(report))
+  return keccak256(ethers.toUtf8Bytes(report));
 }
 
-export async function updateProposal(proposalId: number, hashId: string): Promise<void> {
+export async function updateProposal(
+  proposalId: number,
+  hashId: string
+): Promise<void> {
   try {
     const tx = await DAO_CONTRACT.update_proposal_with_ai_review(
       proposalId,
@@ -201,9 +203,7 @@ export async function updateProposal(proposalId: number, hashId: string): Promis
   } catch (error) {
     console.error("❌ Error updating proposal:", error);
   }
-
 }
-
 
 export async function makeReport(data: AgentData): Promise<ResponseData> {
   // proposal data we assume is mainly a markdown version of the pitch for the proposal
@@ -211,16 +211,21 @@ export async function makeReport(data: AgentData): Promise<ResponseData> {
   // target is the address of the contract the proposal is targeting. This is most relevant if the proposal would modify a target outside of the DAO
   // action is the non-encoded function call that the proposal is suggesting. A plain-text version is actually possible to analyse.
   // TODO: add action_payload and action_target to event
-  const { proposal, proposer, action_payload: action, action_target: target } = data;
+  const {
+    proposal,
+    proposer,
+    action_payload: action,
+    action_target: target,
+  } = data;
   console.log(target, action, proposer, proposal);
 
   // TODO: get proposals from the contract
-  const stakingDistributions = (await DAO_CONTRACT.getStakedAddress()).tx()
+  // const stakingDistributions = (await DAO_CONTRACT.getStakedAddress()).tx()
 
   // TODO: get other proposals from the DAO
-  // const stakingDistributions: [string, number][] = [
-  //   ["0x6Ee1Cc0Db59e31F43c6712759C9A20123FCa1815", 100000],
-  // ]; // 2d array of [address, amount][]
+  const stakingDistributions: [string, number][] = [
+    ["0x6Ee1Cc0Db59e31F43c6712759C9A20123FCa1815", 100000],
+  ]; // 2d array of [address, amount][]
 
   // TODO: this could be an array of treasury sources from published addresses across various networks.
   const treasuryStatus = {
@@ -247,13 +252,14 @@ export async function makeReport(data: AgentData): Promise<ResponseData> {
     target
   );
 
-  console.log(research_message)
+  console.log(research_message);
 
   const researcherResult = await chatCompletion([
     { role: "system", content: research_message },
   ]);
 
-  const formattedReport = researcherResult.data.choices[0].message.content ?? "";
+  const formattedReport =
+    researcherResult.data.choices[0].message.content ?? "";
 
   // main report generation
   // BONUS: could split the researcher into various API tool calls to let the reasoning model choose when to lookup extra info and process in a loop until it has what it thinks is relevant info for the proposal.

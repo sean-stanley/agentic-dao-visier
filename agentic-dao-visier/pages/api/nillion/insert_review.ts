@@ -19,7 +19,8 @@ const makeProposalRecord = (review: ReviewResult) => {
   ];
 };
 
-export default async function insertReview(review: ReviewResult ) {
+// Insert the review body in Nillion DB
+export default async function insertReview(review: ReviewResult) {
   try {
     // Create a secret vault wrapper and initialize the SecretVault collection to use
     const reviewCollection = new SecretVaultWrapper(
@@ -51,6 +52,6 @@ export default async function insertReview(review: ReviewResult ) {
     console.log("Most recent records", decryptedCollectionData.slice(0, 5));
   } catch (error) {
     console.error("❌ SecretVaultWrapper error:", error);
-    throw error
+    throw error;
   }
 }
