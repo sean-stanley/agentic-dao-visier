@@ -38,11 +38,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     const tx = await DAO_CONTRACT.submit_proposal(proposal, target, action, {
       gasLimit: 30000000,
     });
+    
 
     console.log("Transaction receipt:", tx);
 
     // Get the proposal ID from the event
-    
+
 
     // // Fetch the proposal from the contract
     // const proposalData = await DAO_CONTRACT.proposals(proposalId);

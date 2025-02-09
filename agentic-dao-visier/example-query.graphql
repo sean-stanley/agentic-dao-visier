@@ -8,3 +8,9 @@ query ExampleQuery {
     proposer
   }
 }
+
+query LastProposal {
+  proposalSubmitteds(first: 1, orderDirection: desc, orderBy: proposal_id) {
+    proposal_id
+  }
+}
