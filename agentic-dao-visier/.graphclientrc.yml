@@ -1,8 +1,8 @@
 sources:
-  - name: daolensSentinel
+  - name: sentinel
     handler:
       graphql:
-        endpoint: https://api.studio.thegraph.com/query/102988/doalens-sentinel/version/latest
+        endpoint: https://api.studio.thegraph.com/query/102988/daolens/version/latest
 
 documents:
   - ./example-query.graphql

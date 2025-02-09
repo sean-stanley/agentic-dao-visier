@@ -1,10 +1,13 @@
 query ExampleQuery {
   proposalSubmitteds(first: 10) {
+    id
     description
     descriptionHash
     expiryTimestamp
-    id
     proposal_id
     proposer
+    vote_yes
+    vote_no
+    ai_risk_score
   }
 }

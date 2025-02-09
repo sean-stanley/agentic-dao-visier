@@ -1,3 +1,3 @@
 {
-  "958a47bfb1dcbf8bb1900c478d076c639a1a08188c5e8d340ae13c0e76695c55": "query ExampleQuery {\n  proposalSubmitteds(first: 10) {\n    description\n    descriptionHash\n    expiryTimestamp\n    id\n    proposal_id\n    proposer\n  }\n}"
+  "74cf6d8b99a025b03584dac1f971013b3c088822e588bd00072c94b6df826586": "query ExampleQuery {\n  proposalSubmitteds(first: 10) {\n    id\n    description\n    descriptionHash\n    expiryTimestamp\n    proposal_id\n    proposer\n    vote_yes\n    vote_no\n    ai_risk_score\n  }\n}"
 }
