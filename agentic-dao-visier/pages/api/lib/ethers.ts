@@ -20,7 +20,7 @@ export const DAO_ABI = daoAbi;
 export const TOKEN_ABI = [];
 
 export const DAO_CONTRACT = new ethers.Contract(
-  CONTRACT_ADDRESS ?? "",
+  CONTRACT_ADDRESS ?? "0xd374f50fe0464a0b2af06b373c048a6e907045b2",
   DAO_ABI,
   wallet
 );
