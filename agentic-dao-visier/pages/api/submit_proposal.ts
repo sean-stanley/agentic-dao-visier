@@ -41,9 +41,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 
     console.log("Transaction receipt:", tx);
 
-    // Extract proposal ID from transaction logs
-    const proposalId: number = tx.logs[0].topics[1]; // Assuming the event emits proposal ID as the second topic
-    console.log("✅ Proposal submitted with ID:", proposalId);
+    // Get the proposal ID from the event
+    
 
     // // Fetch the proposal from the contract
     // const proposalData = await DAO_CONTRACT.proposals(proposalId);

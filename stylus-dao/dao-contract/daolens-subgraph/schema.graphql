@@ -1,0 +1,77 @@
+type TokensStaked @entity(immutable: true) {
+  id: Bytes!
+  sender: Bytes! # address
+  amount: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type ProposalSubmitted @entity(immutable: true) {
+  id: Bytes!
+  proposer: Bytes! # address
+  proposal_id: BigInt! # uint64
+  descriptionHash: Bytes! # bytes32
+  action_target: Bytes! # address
+  action_payload: String! # string
+  description: String! # string
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type VoteCast @entity(immutable: true) {
+  id: Bytes!
+  voter: Bytes! # address
+  proposal_id: BigInt! # uint64
+  approve: Boolean! # bool
+  power: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type SignerAdded @entity(immutable: true) {
+  id: Bytes!
+  signer: Bytes! # address
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type ProposalApproved @entity(immutable: true) {
+  id: Bytes!
+  signer: Bytes! # address
+  proposal_id: BigInt! # uint64
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type ProposalExecuted @entity(immutable: true) {
+  id: Bytes!
+  proposal_id: BigInt! # uint64
+  target: Bytes! # address
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type MintingSuccess @entity(immutable: true) {
+  id: Bytes!
+  to: Bytes! # address
+  value: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type ProposalAIUpdated @entity(immutable: true) {
+  id: Bytes!
+  proposal_id: BigInt! # uint64
+  ai_review_hash: Bytes! # bytes32
+  score: Int! # uint8
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}

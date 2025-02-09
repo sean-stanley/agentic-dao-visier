@@ -1,0 +1,134 @@
+[
+  {
+    "type": "function",
+    "name": "init",
+    "inputs": [{ "type": "address", "name": "token_address" }],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "mint_to",
+    "inputs": [
+      { "type": "address", "name": "to" },
+      { "type": "uint256", "name": "amount" }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "stake_tokens",
+    "inputs": [{ "type": "uint64", "name": "amount" }],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "submit_proposal",
+    "inputs": [
+      { "type": "string", "name": "description" },
+      { "type": "address", "name": "action_target" },
+      { "type": "string", "name": "action_payload" }
+    ],
+    "outputs": [{ "type": "uint64", "name": "proposal_id" }],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "vote",
+    "inputs": [
+      { "type": "uint64", "name": "proposal_id" },
+      { "type": "bool", "name": "approve" }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "add_signer",
+    "inputs": [{ "type": "address", "name": "signer" }],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "update_proposal_with_ai_review",
+    "inputs": [
+      { "type": "uint64", "name": "proposal_id" },
+      { "type": "bytes32", "name": "ai_review_hash" },
+      { "type": "uint8", "name": "score" }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "event",
+    "name": "TokensStaked",
+    "inputs": [
+      { "type": "address", "name": "sender", "indexed": true },
+      { "type": "uint256", "name": "amount", "indexed": false }
+    ]
+  },
+  {
+    "type": "event",
+    "name": "ProposalSubmitted",
+    "inputs": [
+      { "type": "address", "name": "proposer", "indexed": true },
+      { "type": "uint64", "name": "proposal_id", "indexed": true },
+      { "type": "bytes32", "name": "descriptionHash", "indexed": false },
+      { "type": "address", "name": "action_target", "indexed": false },
+      { "type": "string", "name": "action_payload", "indexed": false },
+      { "type": "string", "name": "description", "indexed": false }
+    ]
+  },
+  {
+    "type": "event",
+    "name": "VoteCast",
+    "inputs": [
+      { "type": "address", "name": "voter", "indexed": true },
+      { "type": "uint64", "name": "proposal_id", "indexed": true },
+      { "type": "bool", "name": "approve", "indexed": false },
+      { "type": "uint256", "name": "power", "indexed": false }
+    ]
+  },
+  {
+    "type": "event",
+    "name": "SignerAdded",
+    "inputs": [{ "type": "address", "name": "signer", "indexed": true }]
+  },
+  {
+    "type": "event",
+    "name": "ProposalApproved",
+    "inputs": [
+      { "type": "address", "name": "signer", "indexed": true },
+      { "type": "uint64", "name": "proposal_id", "indexed": true }
+    ]
+  },
+  {
+    "type": "event",
+    "name": "ProposalExecuted",
+    "inputs": [
+      { "type": "uint64", "name": "proposal_id", "indexed": true },
+      { "type": "address", "name": "target", "indexed": true }
+    ]
+  },
+  {
+    "type": "event",
+    "name": "MintingSuccess",
+    "inputs": [
+      { "type": "address", "name": "to", "indexed": true },
+      { "type": "uint256", "name": "value", "indexed": false }
+    ]
+  },
+  {
+    "type": "event",
+    "name": "ProposalAIUpdated",
+    "inputs": [
+      { "type": "uint64", "name": "proposal_id", "indexed": true },
+      { "type": "bytes32", "name": "ai_review_hash", "indexed": false },
+      { "type": "uint8", "name": "score", "indexed": false }
+    ]
+  },
+  { "type": "error", "name": "NotOwner", "inputs": [] }
+]
