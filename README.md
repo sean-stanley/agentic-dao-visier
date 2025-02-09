@@ -103,6 +103,7 @@ npm start
 * [The Graph](https://thegraph.com/)
 * [Nillion](https://nillion.com/)
 * [OpenAI](https://openai.com/api/)
+* Deployed Subgraph: https://testnet.thegraph.com/explorer/subgraphs/FdrL5TpuiLrZ3R6o6hUagzkEM5z6oBtDDiHsoypyFH25?view=Query&chain=arbitrum-sepolia
 
 ## 👥 Contributors
 
