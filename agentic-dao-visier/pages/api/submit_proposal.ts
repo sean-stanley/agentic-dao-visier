@@ -56,14 +56,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 
     console.log("Last Proposal ID from GraphQL:", proposalId);
 
-    // // Fetch the hash from graph
-    // const storedHash = await DAO_CONTRACT.getProposalHash(proposalId);
+    // Fetch the hash from graph
+    const storedHash = await DAO_CONTRACT.getProposalHash(proposalId);
 
-    // console.log(`Stored hash on-chain: ${storedHash}`);
+    console.log(`Stored hash on-chain: ${storedHash}`);
 
-    // if (descriptionHash !== storedHash) {
-    //   throw new Error("proposal hash doesn't match what was found on-chain");
-    // }
+    if (descriptionHash !== storedHash) {
+      throw new Error("proposal hash doesn't match what was found on-chain");
+    }
 
     // Store the hash and original in nillion collection
 
