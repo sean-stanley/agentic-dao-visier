@@ -216,6 +216,11 @@
         "name": "ai_risk_score",
         "type": "uint8",
         "indexed": false
+      },
+      {
+        "name": "expiryTimestamp",
+        "type": "uint64",
+        "indexed": false
       }
     ],
     "anonymous": false

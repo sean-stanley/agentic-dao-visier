@@ -16,6 +16,7 @@ type ProposalSubmitted @entity(immutable: true) {
   vote_yes: BigInt! # uint64
   vote_no: BigInt! # uint64
   ai_risk_score: Int! # uint8
+  expiryTimestamp: BigInt! # uint64
   blockNumber: BigInt!
   blockTimestamp: BigInt!
   transactionHash: Bytes!

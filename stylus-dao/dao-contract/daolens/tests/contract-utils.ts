@@ -36,7 +36,8 @@ export function createProposalSubmittedEvent(
   description: string,
   vote_yes: BigInt,
   vote_no: BigInt,
-  ai_risk_score: i32
+  ai_risk_score: i32,
+  expiryTimestamp: BigInt
 ): ProposalSubmitted {
   let proposalSubmittedEvent = changetype<ProposalSubmitted>(newMockEvent())
 
@@ -79,6 +80,12 @@ export function createProposalSubmittedEvent(
     new ethereum.EventParam(
       "ai_risk_score",
       ethereum.Value.fromUnsignedBigInt(BigInt.fromI32(ai_risk_score))
+    )
+  )
+  proposalSubmittedEvent.parameters.push(
+    new ethereum.EventParam(
+      "expiryTimestamp",
+      ethereum.Value.fromUnsignedBigInt(expiryTimestamp)
     )
   )
 
