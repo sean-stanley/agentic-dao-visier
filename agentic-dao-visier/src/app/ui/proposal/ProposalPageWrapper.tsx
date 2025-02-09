@@ -5,6 +5,8 @@ import Tab from "./Tab";
 import { promises as fs } from "fs";
 import path from "path";
 
+import MockTabs from "./MockTabs";
+
 interface ProposalPageWrapperProps {
   voteData: VoteData;
   timeline: TimelineData;
@@ -40,11 +42,12 @@ export default async function ProposalPageWrapper({
     <div className="mx-auto mt-8 flex flex-col justify-center space-y-8 px-4 lg:flex-row lg:items-start lg:space-y-0 lg:space-x-8">
       {/* Left Column: Proposal Details */}
       <div className="flex-1 w-full">
-        <ProposalTabContainer
+        {/* <ProposalTabContainer
           informationTab={<Tab content={daoInformation} />}
           highlightTab={<Tab content={keyHighlights} />}
           summaryTab={<Tab content={summary} />}
-        />
+        /> */}
+        <MockTabs />
       </div>
 
       {/* Right Column: Votes & Timeline */}

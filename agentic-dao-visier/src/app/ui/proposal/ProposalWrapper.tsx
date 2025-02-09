@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import ProposalCard from "./ProposalCard";
-import { mockProposals } from "@/app/mocks/mockProposals";
+// import { mockProposals } from "@/app/mocks/mockProposals";
 import { useMutation } from "@tanstack/react-query";
 import { retrieveProposals } from "@/../pages/api/actions";
 import { useEffect } from "react";
