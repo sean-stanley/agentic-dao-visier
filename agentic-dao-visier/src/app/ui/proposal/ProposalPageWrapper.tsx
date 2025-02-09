@@ -19,12 +19,12 @@ export default async function ProposalPageWrapper({
     "utf-8"
   );
 
-  const parseMarkdownSections = (resp) => {
-    const daoInformationSection = resp.split("**Smart Contract ABI**")[0];
-    const keyHighlightsSection = resp
-      .split("### Key Highlights for Governance Advisor:")[1]
-      .split("**1️⃣ Proposal Summary**")[0];
-    const summarySection = resp.split("**1️⃣ Proposal Summary**")[1];
+  const parseMarkdownSections = (resp: string) => {
+    const sections = resp.split("---");
+
+    const daoInformationSection = sections[0];
+    const keyHighlightsSection = sections[1];
+    const summarySection = sections[2];
 
     return {
       daoInformation: daoInformationSection,
