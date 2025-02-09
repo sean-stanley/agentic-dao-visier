@@ -171,7 +171,6 @@ export default async function handler(
     // ready to send report to client
     res.status(200).json(result);
 
-    // TODO: store the review on Nillion nodes
     insertReview(result);
 
     // update proposal with AI review hash
