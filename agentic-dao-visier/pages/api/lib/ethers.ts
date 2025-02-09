@@ -7,8 +7,8 @@ dotenv.config();
 // Load environment variables
 const ARBITRUM_RPC_URL = process.env.ARBITRUM_RPC_URL;
 const PRIVATE_KEY = process.env.PRIVATE_KEY;
-const CONTRACT_ADDRESS = process.env.CONTRACT_ADDRESS;
-const TOKEN_CONTRACT_ADDRESS = process.env.TOKEN_CONTRACT_ADDRESS;
+const CONTRACT_ADDRESS = "0xd374f50fe0464a0b2af06b373c048a6e907045b2";
+const TOKEN_CONTRACT_ADDRESS = "0x9ac4d164d8b9aca924572b08313892d5e20892fb";
 
 
 // Initialize provider, wallet, and contract
