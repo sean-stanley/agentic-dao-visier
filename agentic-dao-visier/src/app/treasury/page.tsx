@@ -5,32 +5,27 @@ const assets: Asset[] = [
   {
     name: "Arbitrum",
     asset: "ARB",
-    amount: 2880000000,
-    logo: "/logos/arbitrum.png",
+    amount: 2880000,
   },
   {
-    name: "Arbitrum Mainnet Ether",
+    name: "Ethereum",
     asset: "ETH",
     amount: 6550,
-    logo: "/logos/arbitrum-eth.png",
   },
   {
     name: "USD Coin",
     asset: "USDC",
     amount: 14220,
-    logo: "/logos/usdc.png",
   },
   {
     name: "Wrapped Ether",
     asset: "WETH",
     amount: 0.01,
-    logo: "/logos/weth.png",
   },
   {
     name: "USD Coin (Arb1)",
     asset: "USDC",
     amount: 0.1,
-    logo: "/logos/usdc-arb1.png",
   },
 ];
 
@@ -38,7 +33,7 @@ const BalanceComponent: React.FC = () => {
   return (
     <div className="p-7">
         <div className="p-6 py-12 max-w-4xl mx-auto rounded-xl shadow-md">
-      <div className="text-2xl font-bold mb-4">$1,438,222,023.56 USD</div>
+      <div className="text-2xl font-bold mb-4">$18,876,710.15 USD</div>
       <div className="text-sm text-gray-500 mb-6">Total Balance</div>
       <div className="grid grid-cols-2 font-bold text-gray-700 border-b pb-2 mb-4">
         <div>Name</div>
