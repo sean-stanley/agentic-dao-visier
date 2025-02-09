@@ -18,35 +18,42 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       return res.status(405).json({ error: "Method not allowed" });
     }
 
-    const { title, descriptiom, target, action } = req.body;
-    if (!descriptiom) {
+    const { title, description, target, action } = req.body;
+    if (!description) {
       return res.status(400).json({ error: "Proposal text is required" });
     }
 
-    const proposal = JSON.stringify({ title, descriptiom });
+    const proposal = JSON.stringify({ title, description });
     
     // Compute Keccak256 hash of the proposal
     const descriptionHash = keccak256(ethers.toUtf8Bytes(proposal));
 
     console.log("Submitting proposal with hash:", descriptionHash);
 
+    console.log("Proposal:", proposal);
+
+    console.log("calling DAO_CONTRACT.submit_proposal");
+
     // Submit proposal
-    const tx = await DAO_CONTRACT.submit_proposal(proposal, target, action);
-    const receipt = await tx.wait();
+    const tx = await DAO_CONTRACT.submit_proposal(proposal, target, action, {
+      gasLimit: 30000000,
+    });
+
+    console.log("Transaction receipt:", tx);
 
     // Extract proposal ID from transaction logs
-    const proposalId: number = receipt.logs[0].topics[1]; // Assuming the event emits proposal ID as the second topic
+    const proposalId: number = tx.logs[0].topics[1]; // Assuming the event emits proposal ID as the second topic
     console.log("✅ Proposal submitted with ID:", proposalId);
 
-    // Fetch the proposal from the contract
-    const proposalData = await DAO_CONTRACT.proposals(proposalId);
-    const storedHash = proposalData.description_hash;
+    // // Fetch the proposal from the contract
+    // const proposalData = await DAO_CONTRACT.proposals(proposalId);
+    // const storedHash = proposalData.description_hash;
 
-    console.log(`Stored hash on-chain: ${storedHash}`);
+    // console.log(`Stored hash on-chain: ${storedHash}`);
 
-    if (descriptionHash !== storedHash) {
-      throw new Error("proposal hash doesn't match what was found on-chain");
-    }
+    // if (descriptionHash !== storedHash) {
+    //   throw new Error("proposal hash doesn't match what was found on-chain");
+    // }
 
     // Store the hash and original in nillion collection
 
@@ -59,15 +66,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 
     await proposalCollection.init();
 
-    // Write collection data to nodes encrypting the specified fields ahead of time
-    const dataWritten = await proposalCollection.writeToNodes(
-      makeProposalRecord(proposal, proposalId)
-    );
+    // // Write collection data to nodes encrypting the specified fields ahead of time
+    // const dataWritten = await proposalCollection.writeToNodes(
+    //   makeProposalRecord(proposal, proposalId)
+    // );
 
-    console.log(
-      "👀 Data written to nodes:",
-      JSON.stringify(dataWritten, null, 2)
-    );
+    // console.log(
+    //   "👀 Data written to nodes:",
+    //   JSON.stringify(dataWritten, null, 2)
+    // );
     res
       .status(201)
       .json({

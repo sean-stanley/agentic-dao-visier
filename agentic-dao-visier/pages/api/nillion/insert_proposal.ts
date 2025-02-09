@@ -40,7 +40,7 @@ export default async function main(proposal: string) {
 
     // Get the ids of the SecretVault records created
     const newIds = [
-      ...new Set(dataWritten.map((item) => item.result.data.created).flat()),
+      ...new Set(dataWritten.map((item: { result: { data: { created: any; }; }; }) => item.result.data.created).flat()),
     ];
     console.log("uploaded record ids:", newIds);
 
