@@ -1,13 +1,13 @@
 import { SecretVaultWrapper } from "nillion-sv-wrappers";
 import { orgConfig } from "./nillion_org_config.js";
-import { keccak256 } from "ethers";
+import { keccak256, toUtf8Bytes } from "ethers";
 
 const PROPOSAL_SCHEMA_ID = "f4d58805-f58b-4388-b1ce-9793e882de2a";
 
 const [, , proposal] = process.argv;
 
-export const makeProposalRecord = (proposal: string, proposal_id = 1) => {
-  const proposalHash = keccak256(proposal);
+export const makeProposalRecord = async (proposal: string, proposal_id: number) => {
+  const proposalHash = await keccak256(toUtf8Bytes("proposal"));  // Example async operation
 
   return [
     {
@@ -31,7 +31,7 @@ export default async function main(proposal: string) {
 
     // Write collection data to nodes encrypting the specified fields ahead of time
     const dataWritten = await proposalCollection.writeToNodes(
-      makeProposalRecord(proposal)
+      await makeProposalRecord(proposal, 1)
     );
     console.log(
       "👀 Data written to nodes:",

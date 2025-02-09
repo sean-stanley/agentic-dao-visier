@@ -35,12 +35,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 
     console.log("calling DAO_CONTRACT.submit_proposal");
 
-    // Submit proposal
-    const tx = await DAO_CONTRACT.submit_proposal(proposal, target, action, {
-      gasLimit: 30000000,
-    });
-    
-    console.log("Transaction receipt:", tx);
+    try {
+      const tx = await DAO_CONTRACT.submitProposal(description, target, action, {
+        gasLimit: 999999999,
+      });
+      const receipt = await tx.wait();
+      console.log("Transaction receipt:", receipt);
+    } catch (error) {
+      console.error("Error submitting proposal:", error);
+      // Check the error message and stack trace for more information
+    }
 
     // wait 5 seconds
     await new Promise((resolve) => setTimeout(resolve, 5000));
@@ -52,9 +56,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 
     console.log("Last Proposal ID from GraphQL:", proposalId);
 
-    // // Fetch the proposal from the contract
-    // const proposalData = await DAO_CONTRACT.proposals(proposalId);
-    // const storedHash = proposalData.description_hash;
+    // // Fetch the hash from graph
+    // const storedHash = await DAO_CONTRACT.getProposalHash(proposalId);
 
     // console.log(`Stored hash on-chain: ${storedHash}`);
 
@@ -71,17 +74,21 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       PROPOSAL_SCHEMA_ID
     );
 
+    /// Try to store the proposal in nillion
+
     await proposalCollection.init();
 
-    // // Write collection data to nodes encrypting the specified fields ahead of time
-    // const dataWritten = await proposalCollection.writeToNodes(
-    //   makeProposalRecord(proposal, proposalId)
-    // );
+    const proposalRecord = await makeProposalRecord(proposal, proposalId);
 
-    // console.log(
-    //   "👀 Data written to nodes:",
-    //   JSON.stringify(dataWritten, null, 2)
-    // );
+    // Write collection data to nodes encrypting the specified fields ahead of time
+    const dataWritten = await proposalCollection.writeToNodes(
+      proposalRecord
+    );
+
+    console.log(
+      "👀 Data written to nodes:",
+      JSON.stringify(dataWritten, null, 2)
+    );
     res
       .status(201)
       .json({

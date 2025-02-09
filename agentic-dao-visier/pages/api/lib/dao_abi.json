@@ -1,5 +1,24 @@
 [
   {
+    "constant": true,
+    "inputs": [
+      {
+        "name": "proposal_id",
+        "type": "uint64"
+      }
+    ],
+    "name": "getProposalDescriptionHash",
+    "outputs": [
+      {
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "type": "function",
     "name": "init",
     "inputs": [
@@ -41,7 +60,7 @@
   },
   {
     "type": "function",
-    "name": "submit_proposal",
+    "name": "submitProposal",
     "inputs": [
       {
         "type": "string",
