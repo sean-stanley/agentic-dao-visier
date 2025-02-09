@@ -128,7 +128,7 @@ const RESEARCHER = {
     ${JSON.stringify(DAO_INFO, null, 2)}
 
     **Smart Contract ABI**
-    ${DAO_ABI.map((sig) => `- ${sig}`).join("\n")}
+    ${DAO_ABI.map((sig) => `- ${JSON.stringify(sig)}`).join("\n")}
 
     **Previous Proposals**
     [] // Not yet implemented
@@ -254,12 +254,26 @@ export async function makeReport(data: AgentData): Promise<ResponseData> {
 
   console.log(research_message);
 
-  const researcherResult = await chatCompletion([
-    { role: "system", content: research_message },
-  ]);
+  let researcherResult;
+  try {
+    researcherResult = (await chatCompletion([
+      { role: "system", content: research_message },
+    ])).data;
+  } catch (error) {
+    console.error(error);
+    researcherResult = await openai.chat.completions
+      .create({
+        model: RESEARCHER.model,
+        messages: [{ role: "system", content: research_message }],
+      })
+      .catch((error) => {
+        console.error("Error in researcher chat completion:", error);
+        throw new Error("Error in researcher chat completion.");
+      });
+  }
 
   const formattedReport =
-    researcherResult.data.choices[0].message.content ?? "";
+    researcherResult.choices[0].message.content ?? "";
 
   // main report generation
   // BONUS: could split the researcher into various API tool calls to let the reasoning model choose when to lookup extra info and process in a loop until it has what it thinks is relevant info for the proposal.

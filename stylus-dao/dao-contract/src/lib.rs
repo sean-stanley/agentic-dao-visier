@@ -333,11 +333,11 @@ impl DAO {
         proposal.ai_risk_score.set(Uint::from(score));
 
         // Emit AI review event
-        evm::log(ProposalAIUpdated {
-            proposal_id,
-            ai_review_hash: FixedBytes::<32>::from(ai_review_hash),
-            score,
-        });
+        // evm::log(ProposalAIUpdated {
+        //     proposal_id,
+        //     ai_review_hash: FixedBytes::<32>::from(ai_review_hash),
+        //     score,
+        // });
     }
 
     /// Verify an AI review against the stored hash
