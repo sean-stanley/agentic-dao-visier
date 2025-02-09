@@ -10,14 +10,11 @@ const iconMap = {
 };
 
 export default async function CardWrapper(){
-    // const {
-    //   data
-    // } = await fetchDataFromSmartContractOrSubGraph()
     return (
         <>
             <Card title="Delegates" value={"442.56K"} type="delegates" subtitle='1.41M token holders'/>
-            <Card title="Proposals" value={68} type="proposals" subtitle='There are active proposals'/>
-            <Card title="Treasury" value={"$17.9M"} type="treasury" subtitle='10 treasury sources'/>
+            <Card title="Proposals" value={35} type="proposals" subtitle='There are active proposals'/>
+            <Card title="Treasury" value={"$18.8M"} type="treasury" subtitle='10 treasury sources'/>
         </>
     )
 }

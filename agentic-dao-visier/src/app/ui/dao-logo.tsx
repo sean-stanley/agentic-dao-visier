@@ -1,11 +1,11 @@
-import { GlobeAltIcon } from '@heroicons/react/24/outline';
+import Image from 'next/image';
 
 
-export default function AgenticDAOLogo() {
+export default function SentinelLogo() {
     return (
       <div className="flex flex-row items-center leading-none text-white">
-        <GlobeAltIcon className="h-16 w-16 rotate-[15deg]" />
-        <p className="ml-2 text-3xl font-normal">Agentic DAO</p>
+        <Image src="/sentinel.png" alt='sentinel logo' width={50} height={50}/>
+        <p className="ml-2 text-3xl font-bold font-extrabold">Sentinel</p>
       </div>
     );
   }
