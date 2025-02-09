@@ -5,6 +5,7 @@ import { orgConfig, PROPOSAL_SCHEMA_ID } from "./nillion/nillion_org_config";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { makeProposalRecord } from "./nillion/insert_proposal";
 import { DAO_CONTRACT } from "./lib/ethers";
+import { LastProposalIdDocument, LastProposalIdQuery, execute } from '../../.graphclient'
 
 dotenv.config();
 
@@ -39,11 +40,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       gasLimit: 30000000,
     });
     
-
     console.log("Transaction receipt:", tx);
 
-    // Get the proposal ID from the event
+    // wait 5 seconds
+    await new Promise((resolve) => setTimeout(resolve, 5000));
 
+    // Get the proposal ID from the event
+    const result = await execute(LastProposalIdDocument, {});
+
+    const proposalId = result?.data?.proposalSubmitteds?.[0]?.proposal_id;
+
+    console.log("Last Proposal ID from GraphQL:", proposalId);
 
     // // Fetch the proposal from the contract
     // const proposalData = await DAO_CONTRACT.proposals(proposalId);

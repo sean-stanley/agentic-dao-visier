@@ -39,84 +39,6 @@ export type Block_height = {
   number_gte?: InputMaybe<Scalars['Int']['input']>;
 };
 
-export type BurningSuccess = {
-  id: Scalars['Bytes']['output'];
-  from: Scalars['Bytes']['output'];
-  value: Scalars['BigInt']['output'];
-  blockNumber: Scalars['BigInt']['output'];
-  blockTimestamp: Scalars['BigInt']['output'];
-  transactionHash: Scalars['Bytes']['output'];
-};
-
-export type BurningSuccess_filter = {
-  id?: InputMaybe<Scalars['Bytes']['input']>;
-  id_not?: InputMaybe<Scalars['Bytes']['input']>;
-  id_gt?: InputMaybe<Scalars['Bytes']['input']>;
-  id_lt?: InputMaybe<Scalars['Bytes']['input']>;
-  id_gte?: InputMaybe<Scalars['Bytes']['input']>;
-  id_lte?: InputMaybe<Scalars['Bytes']['input']>;
-  id_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
-  id_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
-  id_contains?: InputMaybe<Scalars['Bytes']['input']>;
-  id_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
-  from?: InputMaybe<Scalars['Bytes']['input']>;
-  from_not?: InputMaybe<Scalars['Bytes']['input']>;
-  from_gt?: InputMaybe<Scalars['Bytes']['input']>;
-  from_lt?: InputMaybe<Scalars['Bytes']['input']>;
-  from_gte?: InputMaybe<Scalars['Bytes']['input']>;
-  from_lte?: InputMaybe<Scalars['Bytes']['input']>;
-  from_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
-  from_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
-  from_contains?: InputMaybe<Scalars['Bytes']['input']>;
-  from_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
-  value?: InputMaybe<Scalars['BigInt']['input']>;
-  value_not?: InputMaybe<Scalars['BigInt']['input']>;
-  value_gt?: InputMaybe<Scalars['BigInt']['input']>;
-  value_lt?: InputMaybe<Scalars['BigInt']['input']>;
-  value_gte?: InputMaybe<Scalars['BigInt']['input']>;
-  value_lte?: InputMaybe<Scalars['BigInt']['input']>;
-  value_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
-  value_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
-  blockNumber?: InputMaybe<Scalars['BigInt']['input']>;
-  blockNumber_not?: InputMaybe<Scalars['BigInt']['input']>;
-  blockNumber_gt?: InputMaybe<Scalars['BigInt']['input']>;
-  blockNumber_lt?: InputMaybe<Scalars['BigInt']['input']>;
-  blockNumber_gte?: InputMaybe<Scalars['BigInt']['input']>;
-  blockNumber_lte?: InputMaybe<Scalars['BigInt']['input']>;
-  blockNumber_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
-  blockNumber_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
-  blockTimestamp?: InputMaybe<Scalars['BigInt']['input']>;
-  blockTimestamp_not?: InputMaybe<Scalars['BigInt']['input']>;
-  blockTimestamp_gt?: InputMaybe<Scalars['BigInt']['input']>;
-  blockTimestamp_lt?: InputMaybe<Scalars['BigInt']['input']>;
-  blockTimestamp_gte?: InputMaybe<Scalars['BigInt']['input']>;
-  blockTimestamp_lte?: InputMaybe<Scalars['BigInt']['input']>;
-  blockTimestamp_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
-  blockTimestamp_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
-  transactionHash?: InputMaybe<Scalars['Bytes']['input']>;
-  transactionHash_not?: InputMaybe<Scalars['Bytes']['input']>;
-  transactionHash_gt?: InputMaybe<Scalars['Bytes']['input']>;
-  transactionHash_lt?: InputMaybe<Scalars['Bytes']['input']>;
-  transactionHash_gte?: InputMaybe<Scalars['Bytes']['input']>;
-  transactionHash_lte?: InputMaybe<Scalars['Bytes']['input']>;
-  transactionHash_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
-  transactionHash_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
-  transactionHash_contains?: InputMaybe<Scalars['Bytes']['input']>;
-  transactionHash_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
-  /** Filter for the block changed event. */
-  _change_block?: InputMaybe<BlockChangedFilter>;
-  and?: InputMaybe<Array<InputMaybe<BurningSuccess_filter>>>;
-  or?: InputMaybe<Array<InputMaybe<BurningSuccess_filter>>>;
-};
-
-export type BurningSuccess_orderBy =
-  | 'id'
-  | 'from'
-  | 'value'
-  | 'blockNumber'
-  | 'blockTimestamp'
-  | 'transactionHash';
-
 export type MintingSuccess = {
   id: Scalars['Bytes']['output'];
   to: Scalars['Bytes']['output'];
@@ -199,6 +121,172 @@ export type MintingSuccess_orderBy =
 export type OrderDirection =
   | 'asc'
   | 'desc';
+
+export type ProposalAIUpdated = {
+  id: Scalars['Bytes']['output'];
+  proposal_id: Scalars['BigInt']['output'];
+  ai_review_hash: Scalars['Bytes']['output'];
+  score: Scalars['Int']['output'];
+  blockNumber: Scalars['BigInt']['output'];
+  blockTimestamp: Scalars['BigInt']['output'];
+  transactionHash: Scalars['Bytes']['output'];
+};
+
+export type ProposalAIUpdated_filter = {
+  id?: InputMaybe<Scalars['Bytes']['input']>;
+  id_not?: InputMaybe<Scalars['Bytes']['input']>;
+  id_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  id_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  id_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  id_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  id_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  id_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  id_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  id_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  proposal_id?: InputMaybe<Scalars['BigInt']['input']>;
+  proposal_id_not?: InputMaybe<Scalars['BigInt']['input']>;
+  proposal_id_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  proposal_id_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  proposal_id_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  proposal_id_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  proposal_id_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  proposal_id_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  ai_review_hash?: InputMaybe<Scalars['Bytes']['input']>;
+  ai_review_hash_not?: InputMaybe<Scalars['Bytes']['input']>;
+  ai_review_hash_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  ai_review_hash_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  ai_review_hash_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  ai_review_hash_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  ai_review_hash_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  ai_review_hash_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  ai_review_hash_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  ai_review_hash_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  score?: InputMaybe<Scalars['Int']['input']>;
+  score_not?: InputMaybe<Scalars['Int']['input']>;
+  score_gt?: InputMaybe<Scalars['Int']['input']>;
+  score_lt?: InputMaybe<Scalars['Int']['input']>;
+  score_gte?: InputMaybe<Scalars['Int']['input']>;
+  score_lte?: InputMaybe<Scalars['Int']['input']>;
+  score_in?: InputMaybe<Array<Scalars['Int']['input']>>;
+  score_not_in?: InputMaybe<Array<Scalars['Int']['input']>>;
+  blockNumber?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_not?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockNumber_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockTimestamp?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_not?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockTimestamp_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  transactionHash?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_not?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  transactionHash_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  transactionHash_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  /** Filter for the block changed event. */
+  _change_block?: InputMaybe<BlockChangedFilter>;
+  and?: InputMaybe<Array<InputMaybe<ProposalAIUpdated_filter>>>;
+  or?: InputMaybe<Array<InputMaybe<ProposalAIUpdated_filter>>>;
+};
+
+export type ProposalAIUpdated_orderBy =
+  | 'id'
+  | 'proposal_id'
+  | 'ai_review_hash'
+  | 'score'
+  | 'blockNumber'
+  | 'blockTimestamp'
+  | 'transactionHash';
+
+export type ProposalApproved = {
+  id: Scalars['Bytes']['output'];
+  signer: Scalars['Bytes']['output'];
+  proposal_id: Scalars['BigInt']['output'];
+  blockNumber: Scalars['BigInt']['output'];
+  blockTimestamp: Scalars['BigInt']['output'];
+  transactionHash: Scalars['Bytes']['output'];
+};
+
+export type ProposalApproved_filter = {
+  id?: InputMaybe<Scalars['Bytes']['input']>;
+  id_not?: InputMaybe<Scalars['Bytes']['input']>;
+  id_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  id_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  id_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  id_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  id_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  id_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  id_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  id_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  signer?: InputMaybe<Scalars['Bytes']['input']>;
+  signer_not?: InputMaybe<Scalars['Bytes']['input']>;
+  signer_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  signer_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  signer_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  signer_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  signer_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  signer_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  signer_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  signer_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  proposal_id?: InputMaybe<Scalars['BigInt']['input']>;
+  proposal_id_not?: InputMaybe<Scalars['BigInt']['input']>;
+  proposal_id_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  proposal_id_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  proposal_id_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  proposal_id_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  proposal_id_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  proposal_id_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockNumber?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_not?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockNumber_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockNumber_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockTimestamp?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_not?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  blockTimestamp_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  blockTimestamp_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  transactionHash?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_not?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_gt?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_lt?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_gte?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_lte?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  transactionHash_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  transactionHash_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  transactionHash_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
+  /** Filter for the block changed event. */
+  _change_block?: InputMaybe<BlockChangedFilter>;
+  and?: InputMaybe<Array<InputMaybe<ProposalApproved_filter>>>;
+  or?: InputMaybe<Array<InputMaybe<ProposalApproved_filter>>>;
+};
+
+export type ProposalApproved_orderBy =
+  | 'id'
+  | 'signer'
+  | 'proposal_id'
+  | 'blockNumber'
+  | 'blockTimestamp'
+  | 'transactionHash';
 
 export type ProposalExecuted = {
   id: Scalars['Bytes']['output'];
@@ -283,10 +371,11 @@ export type ProposalSubmitted = {
   proposer: Scalars['Bytes']['output'];
   proposal_id: Scalars['BigInt']['output'];
   descriptionHash: Scalars['Bytes']['output'];
-  action_target: Scalars['Bytes']['output'];
-  action_payload: Scalars['Bytes']['output'];
-  expiryTimestamp: Scalars['BigInt']['output'];
   description: Scalars['String']['output'];
+  vote_yes: Scalars['BigInt']['output'];
+  vote_no: Scalars['BigInt']['output'];
+  ai_risk_score: Scalars['Int']['output'];
+  expiryTimestamp: Scalars['BigInt']['output'];
   blockNumber: Scalars['BigInt']['output'];
   blockTimestamp: Scalars['BigInt']['output'];
   transactionHash: Scalars['Bytes']['output'];
@@ -331,34 +420,6 @@ export type ProposalSubmitted_filter = {
   descriptionHash_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
   descriptionHash_contains?: InputMaybe<Scalars['Bytes']['input']>;
   descriptionHash_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
-  action_target?: InputMaybe<Scalars['Bytes']['input']>;
-  action_target_not?: InputMaybe<Scalars['Bytes']['input']>;
-  action_target_gt?: InputMaybe<Scalars['Bytes']['input']>;
-  action_target_lt?: InputMaybe<Scalars['Bytes']['input']>;
-  action_target_gte?: InputMaybe<Scalars['Bytes']['input']>;
-  action_target_lte?: InputMaybe<Scalars['Bytes']['input']>;
-  action_target_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
-  action_target_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
-  action_target_contains?: InputMaybe<Scalars['Bytes']['input']>;
-  action_target_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
-  action_payload?: InputMaybe<Scalars['Bytes']['input']>;
-  action_payload_not?: InputMaybe<Scalars['Bytes']['input']>;
-  action_payload_gt?: InputMaybe<Scalars['Bytes']['input']>;
-  action_payload_lt?: InputMaybe<Scalars['Bytes']['input']>;
-  action_payload_gte?: InputMaybe<Scalars['Bytes']['input']>;
-  action_payload_lte?: InputMaybe<Scalars['Bytes']['input']>;
-  action_payload_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
-  action_payload_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
-  action_payload_contains?: InputMaybe<Scalars['Bytes']['input']>;
-  action_payload_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
-  expiryTimestamp?: InputMaybe<Scalars['BigInt']['input']>;
-  expiryTimestamp_not?: InputMaybe<Scalars['BigInt']['input']>;
-  expiryTimestamp_gt?: InputMaybe<Scalars['BigInt']['input']>;
-  expiryTimestamp_lt?: InputMaybe<Scalars['BigInt']['input']>;
-  expiryTimestamp_gte?: InputMaybe<Scalars['BigInt']['input']>;
-  expiryTimestamp_lte?: InputMaybe<Scalars['BigInt']['input']>;
-  expiryTimestamp_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
-  expiryTimestamp_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
   description?: InputMaybe<Scalars['String']['input']>;
   description_not?: InputMaybe<Scalars['String']['input']>;
   description_gt?: InputMaybe<Scalars['String']['input']>;
@@ -379,6 +440,38 @@ export type ProposalSubmitted_filter = {
   description_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
   description_not_ends_with?: InputMaybe<Scalars['String']['input']>;
   description_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  vote_yes?: InputMaybe<Scalars['BigInt']['input']>;
+  vote_yes_not?: InputMaybe<Scalars['BigInt']['input']>;
+  vote_yes_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  vote_yes_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  vote_yes_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  vote_yes_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  vote_yes_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  vote_yes_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  vote_no?: InputMaybe<Scalars['BigInt']['input']>;
+  vote_no_not?: InputMaybe<Scalars['BigInt']['input']>;
+  vote_no_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  vote_no_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  vote_no_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  vote_no_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  vote_no_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  vote_no_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  ai_risk_score?: InputMaybe<Scalars['Int']['input']>;
+  ai_risk_score_not?: InputMaybe<Scalars['Int']['input']>;
+  ai_risk_score_gt?: InputMaybe<Scalars['Int']['input']>;
+  ai_risk_score_lt?: InputMaybe<Scalars['Int']['input']>;
+  ai_risk_score_gte?: InputMaybe<Scalars['Int']['input']>;
+  ai_risk_score_lte?: InputMaybe<Scalars['Int']['input']>;
+  ai_risk_score_in?: InputMaybe<Array<Scalars['Int']['input']>>;
+  ai_risk_score_not_in?: InputMaybe<Array<Scalars['Int']['input']>>;
+  expiryTimestamp?: InputMaybe<Scalars['BigInt']['input']>;
+  expiryTimestamp_not?: InputMaybe<Scalars['BigInt']['input']>;
+  expiryTimestamp_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  expiryTimestamp_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  expiryTimestamp_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  expiryTimestamp_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  expiryTimestamp_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  expiryTimestamp_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
   blockNumber?: InputMaybe<Scalars['BigInt']['input']>;
   blockNumber_not?: InputMaybe<Scalars['BigInt']['input']>;
   blockNumber_gt?: InputMaybe<Scalars['BigInt']['input']>;
@@ -416,10 +509,11 @@ export type ProposalSubmitted_orderBy =
   | 'proposer'
   | 'proposal_id'
   | 'descriptionHash'
-  | 'action_target'
-  | 'action_payload'
-  | 'expiryTimestamp'
   | 'description'
+  | 'vote_yes'
+  | 'vote_no'
+  | 'ai_risk_score'
+  | 'expiryTimestamp'
   | 'blockNumber'
   | 'blockTimestamp'
   | 'transactionHash';
@@ -433,14 +527,14 @@ export type Query = {
   voteCasts: Array<VoteCast>;
   signerAdded?: Maybe<SignerAdded>;
   signerAddeds: Array<SignerAdded>;
+  proposalApproved?: Maybe<ProposalApproved>;
+  proposalApproveds: Array<ProposalApproved>;
   proposalExecuted?: Maybe<ProposalExecuted>;
   proposalExecuteds: Array<ProposalExecuted>;
   mintingSuccess?: Maybe<MintingSuccess>;
   mintingSuccesses: Array<MintingSuccess>;
-  burningSuccess?: Maybe<BurningSuccess>;
-  burningSuccesses: Array<BurningSuccess>;
-  transferSuccess?: Maybe<TransferSuccess>;
-  transferSuccesses: Array<TransferSuccess>;
+  proposalAIUpdated?: Maybe<ProposalAIUpdated>;
+  proposalAIUpdateds: Array<ProposalAIUpdated>;
   /** Access to subgraph metadata */
   _meta?: Maybe<_Meta_>;
 };
@@ -518,6 +612,24 @@ export type QuerysignerAddedsArgs = {
 };
 
 
+export type QueryproposalApprovedArgs = {
+  id: Scalars['ID']['input'];
+  block?: InputMaybe<Block_height>;
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type QueryproposalApprovedsArgs = {
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<ProposalApproved_orderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  where?: InputMaybe<ProposalApproved_filter>;
+  block?: InputMaybe<Block_height>;
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
 export type QueryproposalExecutedArgs = {
   id: Scalars['ID']['input'];
   block?: InputMaybe<Block_height>;
@@ -554,37 +666,19 @@ export type QuerymintingSuccessesArgs = {
 };
 
 
-export type QueryburningSuccessArgs = {
+export type QueryproposalAIUpdatedArgs = {
   id: Scalars['ID']['input'];
   block?: InputMaybe<Block_height>;
   subgraphError?: _SubgraphErrorPolicy_;
 };
 
 
-export type QueryburningSuccessesArgs = {
+export type QueryproposalAIUpdatedsArgs = {
   skip?: InputMaybe<Scalars['Int']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<BurningSuccess_orderBy>;
+  orderBy?: InputMaybe<ProposalAIUpdated_orderBy>;
   orderDirection?: InputMaybe<OrderDirection>;
-  where?: InputMaybe<BurningSuccess_filter>;
-  block?: InputMaybe<Block_height>;
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type QuerytransferSuccessArgs = {
-  id: Scalars['ID']['input'];
-  block?: InputMaybe<Block_height>;
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type QuerytransferSuccessesArgs = {
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<TransferSuccess_orderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  where?: InputMaybe<TransferSuccess_filter>;
+  where?: InputMaybe<ProposalAIUpdated_filter>;
   block?: InputMaybe<Block_height>;
   subgraphError?: _SubgraphErrorPolicy_;
 };
@@ -671,14 +765,14 @@ export type Subscription = {
   voteCasts: Array<VoteCast>;
   signerAdded?: Maybe<SignerAdded>;
   signerAddeds: Array<SignerAdded>;
+  proposalApproved?: Maybe<ProposalApproved>;
+  proposalApproveds: Array<ProposalApproved>;
   proposalExecuted?: Maybe<ProposalExecuted>;
   proposalExecuteds: Array<ProposalExecuted>;
   mintingSuccess?: Maybe<MintingSuccess>;
   mintingSuccesses: Array<MintingSuccess>;
-  burningSuccess?: Maybe<BurningSuccess>;
-  burningSuccesses: Array<BurningSuccess>;
-  transferSuccess?: Maybe<TransferSuccess>;
-  transferSuccesses: Array<TransferSuccess>;
+  proposalAIUpdated?: Maybe<ProposalAIUpdated>;
+  proposalAIUpdateds: Array<ProposalAIUpdated>;
   /** Access to subgraph metadata */
   _meta?: Maybe<_Meta_>;
 };
@@ -756,6 +850,24 @@ export type SubscriptionsignerAddedsArgs = {
 };
 
 
+export type SubscriptionproposalApprovedArgs = {
+  id: Scalars['ID']['input'];
+  block?: InputMaybe<Block_height>;
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
+export type SubscriptionproposalApprovedsArgs = {
+  skip?: InputMaybe<Scalars['Int']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<ProposalApproved_orderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  where?: InputMaybe<ProposalApproved_filter>;
+  block?: InputMaybe<Block_height>;
+  subgraphError?: _SubgraphErrorPolicy_;
+};
+
+
 export type SubscriptionproposalExecutedArgs = {
   id: Scalars['ID']['input'];
   block?: InputMaybe<Block_height>;
@@ -792,37 +904,19 @@ export type SubscriptionmintingSuccessesArgs = {
 };
 
 
-export type SubscriptionburningSuccessArgs = {
+export type SubscriptionproposalAIUpdatedArgs = {
   id: Scalars['ID']['input'];
   block?: InputMaybe<Block_height>;
   subgraphError?: _SubgraphErrorPolicy_;
 };
 
 
-export type SubscriptionburningSuccessesArgs = {
+export type SubscriptionproposalAIUpdatedsArgs = {
   skip?: InputMaybe<Scalars['Int']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<BurningSuccess_orderBy>;
+  orderBy?: InputMaybe<ProposalAIUpdated_orderBy>;
   orderDirection?: InputMaybe<OrderDirection>;
-  where?: InputMaybe<BurningSuccess_filter>;
-  block?: InputMaybe<Block_height>;
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type SubscriptiontransferSuccessArgs = {
-  id: Scalars['ID']['input'];
-  block?: InputMaybe<Block_height>;
-  subgraphError?: _SubgraphErrorPolicy_;
-};
-
-
-export type SubscriptiontransferSuccessesArgs = {
-  skip?: InputMaybe<Scalars['Int']['input']>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<TransferSuccess_orderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  where?: InputMaybe<TransferSuccess_filter>;
+  where?: InputMaybe<ProposalAIUpdated_filter>;
   block?: InputMaybe<Block_height>;
   subgraphError?: _SubgraphErrorPolicy_;
 };
@@ -906,96 +1000,6 @@ export type TokensStaked_orderBy =
   | 'id'
   | 'sender'
   | 'amount'
-  | 'blockNumber'
-  | 'blockTimestamp'
-  | 'transactionHash';
-
-export type TransferSuccess = {
-  id: Scalars['Bytes']['output'];
-  from: Scalars['Bytes']['output'];
-  to: Scalars['Bytes']['output'];
-  value: Scalars['BigInt']['output'];
-  blockNumber: Scalars['BigInt']['output'];
-  blockTimestamp: Scalars['BigInt']['output'];
-  transactionHash: Scalars['Bytes']['output'];
-};
-
-export type TransferSuccess_filter = {
-  id?: InputMaybe<Scalars['Bytes']['input']>;
-  id_not?: InputMaybe<Scalars['Bytes']['input']>;
-  id_gt?: InputMaybe<Scalars['Bytes']['input']>;
-  id_lt?: InputMaybe<Scalars['Bytes']['input']>;
-  id_gte?: InputMaybe<Scalars['Bytes']['input']>;
-  id_lte?: InputMaybe<Scalars['Bytes']['input']>;
-  id_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
-  id_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
-  id_contains?: InputMaybe<Scalars['Bytes']['input']>;
-  id_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
-  from?: InputMaybe<Scalars['Bytes']['input']>;
-  from_not?: InputMaybe<Scalars['Bytes']['input']>;
-  from_gt?: InputMaybe<Scalars['Bytes']['input']>;
-  from_lt?: InputMaybe<Scalars['Bytes']['input']>;
-  from_gte?: InputMaybe<Scalars['Bytes']['input']>;
-  from_lte?: InputMaybe<Scalars['Bytes']['input']>;
-  from_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
-  from_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
-  from_contains?: InputMaybe<Scalars['Bytes']['input']>;
-  from_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
-  to?: InputMaybe<Scalars['Bytes']['input']>;
-  to_not?: InputMaybe<Scalars['Bytes']['input']>;
-  to_gt?: InputMaybe<Scalars['Bytes']['input']>;
-  to_lt?: InputMaybe<Scalars['Bytes']['input']>;
-  to_gte?: InputMaybe<Scalars['Bytes']['input']>;
-  to_lte?: InputMaybe<Scalars['Bytes']['input']>;
-  to_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
-  to_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
-  to_contains?: InputMaybe<Scalars['Bytes']['input']>;
-  to_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
-  value?: InputMaybe<Scalars['BigInt']['input']>;
-  value_not?: InputMaybe<Scalars['BigInt']['input']>;
-  value_gt?: InputMaybe<Scalars['BigInt']['input']>;
-  value_lt?: InputMaybe<Scalars['BigInt']['input']>;
-  value_gte?: InputMaybe<Scalars['BigInt']['input']>;
-  value_lte?: InputMaybe<Scalars['BigInt']['input']>;
-  value_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
-  value_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
-  blockNumber?: InputMaybe<Scalars['BigInt']['input']>;
-  blockNumber_not?: InputMaybe<Scalars['BigInt']['input']>;
-  blockNumber_gt?: InputMaybe<Scalars['BigInt']['input']>;
-  blockNumber_lt?: InputMaybe<Scalars['BigInt']['input']>;
-  blockNumber_gte?: InputMaybe<Scalars['BigInt']['input']>;
-  blockNumber_lte?: InputMaybe<Scalars['BigInt']['input']>;
-  blockNumber_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
-  blockNumber_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
-  blockTimestamp?: InputMaybe<Scalars['BigInt']['input']>;
-  blockTimestamp_not?: InputMaybe<Scalars['BigInt']['input']>;
-  blockTimestamp_gt?: InputMaybe<Scalars['BigInt']['input']>;
-  blockTimestamp_lt?: InputMaybe<Scalars['BigInt']['input']>;
-  blockTimestamp_gte?: InputMaybe<Scalars['BigInt']['input']>;
-  blockTimestamp_lte?: InputMaybe<Scalars['BigInt']['input']>;
-  blockTimestamp_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
-  blockTimestamp_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
-  transactionHash?: InputMaybe<Scalars['Bytes']['input']>;
-  transactionHash_not?: InputMaybe<Scalars['Bytes']['input']>;
-  transactionHash_gt?: InputMaybe<Scalars['Bytes']['input']>;
-  transactionHash_lt?: InputMaybe<Scalars['Bytes']['input']>;
-  transactionHash_gte?: InputMaybe<Scalars['Bytes']['input']>;
-  transactionHash_lte?: InputMaybe<Scalars['Bytes']['input']>;
-  transactionHash_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
-  transactionHash_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
-  transactionHash_contains?: InputMaybe<Scalars['Bytes']['input']>;
-  transactionHash_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
-  /** Filter for the block changed event. */
-  _change_block?: InputMaybe<BlockChangedFilter>;
-  and?: InputMaybe<Array<InputMaybe<TransferSuccess_filter>>>;
-  or?: InputMaybe<Array<InputMaybe<TransferSuccess_filter>>>;
-};
-
-export type TransferSuccess_orderBy =
-  | 'id'
-  | 'from'
-  | 'to'
-  | 'value'
   | 'blockNumber'
   | 'blockTimestamp'
   | 'transactionHash';
@@ -1145,6 +1149,10 @@ export type _SubgraphErrorPolicy_ =
   /** null **/
   signerAddeds: InContextSdkMethod<Query['signerAddeds'], QuerysignerAddedsArgs, MeshContext>,
   /** null **/
+  proposalApproved: InContextSdkMethod<Query['proposalApproved'], QueryproposalApprovedArgs, MeshContext>,
+  /** null **/
+  proposalApproveds: InContextSdkMethod<Query['proposalApproveds'], QueryproposalApprovedsArgs, MeshContext>,
+  /** null **/
   proposalExecuted: InContextSdkMethod<Query['proposalExecuted'], QueryproposalExecutedArgs, MeshContext>,
   /** null **/
   proposalExecuteds: InContextSdkMethod<Query['proposalExecuteds'], QueryproposalExecutedsArgs, MeshContext>,
@@ -1153,13 +1161,9 @@ export type _SubgraphErrorPolicy_ =
   /** null **/
   mintingSuccesses: InContextSdkMethod<Query['mintingSuccesses'], QuerymintingSuccessesArgs, MeshContext>,
   /** null **/
-  burningSuccess: InContextSdkMethod<Query['burningSuccess'], QueryburningSuccessArgs, MeshContext>,
+  proposalAIUpdated: InContextSdkMethod<Query['proposalAIUpdated'], QueryproposalAIUpdatedArgs, MeshContext>,
   /** null **/
-  burningSuccesses: InContextSdkMethod<Query['burningSuccesses'], QueryburningSuccessesArgs, MeshContext>,
-  /** null **/
-  transferSuccess: InContextSdkMethod<Query['transferSuccess'], QuerytransferSuccessArgs, MeshContext>,
-  /** null **/
-  transferSuccesses: InContextSdkMethod<Query['transferSuccesses'], QuerytransferSuccessesArgs, MeshContext>,
+  proposalAIUpdateds: InContextSdkMethod<Query['proposalAIUpdateds'], QueryproposalAIUpdatedsArgs, MeshContext>,
   /** Access to subgraph metadata **/
   _meta: InContextSdkMethod<Query['_meta'], Query_metaArgs, MeshContext>
   };
@@ -1186,6 +1190,10 @@ export type _SubgraphErrorPolicy_ =
   /** null **/
   signerAddeds: InContextSdkMethod<Subscription['signerAddeds'], SubscriptionsignerAddedsArgs, MeshContext>,
   /** null **/
+  proposalApproved: InContextSdkMethod<Subscription['proposalApproved'], SubscriptionproposalApprovedArgs, MeshContext>,
+  /** null **/
+  proposalApproveds: InContextSdkMethod<Subscription['proposalApproveds'], SubscriptionproposalApprovedsArgs, MeshContext>,
+  /** null **/
   proposalExecuted: InContextSdkMethod<Subscription['proposalExecuted'], SubscriptionproposalExecutedArgs, MeshContext>,
   /** null **/
   proposalExecuteds: InContextSdkMethod<Subscription['proposalExecuteds'], SubscriptionproposalExecutedsArgs, MeshContext>,
@@ -1194,13 +1202,9 @@ export type _SubgraphErrorPolicy_ =
   /** null **/
   mintingSuccesses: InContextSdkMethod<Subscription['mintingSuccesses'], SubscriptionmintingSuccessesArgs, MeshContext>,
   /** null **/
-  burningSuccess: InContextSdkMethod<Subscription['burningSuccess'], SubscriptionburningSuccessArgs, MeshContext>,
+  proposalAIUpdated: InContextSdkMethod<Subscription['proposalAIUpdated'], SubscriptionproposalAIUpdatedArgs, MeshContext>,
   /** null **/
-  burningSuccesses: InContextSdkMethod<Subscription['burningSuccesses'], SubscriptionburningSuccessesArgs, MeshContext>,
-  /** null **/
-  transferSuccess: InContextSdkMethod<Subscription['transferSuccess'], SubscriptiontransferSuccessArgs, MeshContext>,
-  /** null **/
-  transferSuccesses: InContextSdkMethod<Subscription['transferSuccesses'], SubscriptiontransferSuccessesArgs, MeshContext>,
+  proposalAIUpdateds: InContextSdkMethod<Subscription['proposalAIUpdateds'], SubscriptionproposalAIUpdatedsArgs, MeshContext>,
   /** Access to subgraph metadata **/
   _meta: InContextSdkMethod<Subscription['_meta'], Subscription_metaArgs, MeshContext>
   };

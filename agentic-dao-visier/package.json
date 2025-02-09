@@ -9,12 +9,15 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@graphql-mesh/cli": "^0.98.18",
+    "@graphql-tools/utils": "^10.7.2",
     "@heroicons/react": "^2.2.0",
     "@rainbow-me/rainbowkit": "^2.2.3",
     "@tanstack/react-query": "^5.66.0",
     "axios": "^1.7.9",
     "ethereum-blockies": "^0.1.1",
     "ethers": "^6.13.5",
+    "graphql": "^16.10.0",
     "next": "15.1.6",
     "next-mdx-remote": "^5.0.0",
     "nillion-sv-wrappers": "^1.0.6",

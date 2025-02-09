@@ -9,7 +9,7 @@ query ExampleQuery {
   }
 }
 
-query LastProposal {
+query LastProposalId {
   proposalSubmitteds(first: 1, orderDirection: desc, orderBy: proposal_id) {
     proposal_id
   }

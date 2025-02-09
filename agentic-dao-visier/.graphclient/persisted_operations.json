@@ -1,3 +1,3 @@
 {
-  "958a47bfb1dcbf8bb1900c478d076c639a1a08188c5e8d340ae13c0e76695c55": "query ExampleQuery {\n  proposalSubmitteds(first: 10) {\n    description\n    descriptionHash\n    expiryTimestamp\n    id\n    proposal_id\n    proposer\n  }\n}"
+  "1fe51bf2728cdf46b61f33eac79a9bc8eeaad09929df5a882b3bcea6bb12a9f6": "query ExampleQuery {\n  proposalSubmitteds(first: 10) {\n    description\n    descriptionHash\n    expiryTimestamp\n    id\n    proposal_id\n    proposer\n  }\n}\n\nquery LastProposalId {\n  proposalSubmitteds(first: 1, orderDirection: desc, orderBy: proposal_id) {\n    proposal_id\n  }\n}"
 }
